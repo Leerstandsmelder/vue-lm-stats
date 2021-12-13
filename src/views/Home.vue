@@ -3,11 +3,17 @@
     <v-row>
       <v-col>
         <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <h2>Regions</h2>
           <v-row>
             <v-col cols="12" sm="6" md="4">
-              {{ active }}
-              {{ regionData }}
+              <h2>{{ regionData.title }}</h2>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-map-marker</v-icon>
+                </v-list-item-icon>
+                <v-list-item-subtitle>{{
+                  locations.length
+                }}</v-list-item-subtitle>
+              </v-list-item>
             </v-col>
             <v-col cols="12" sm="6" md="4"> </v-col>
             <v-col cols="12" sm="6" md="4"> </v-col>
@@ -86,7 +92,7 @@
               class
               ratio="ct-major-second"
               type="Bar"
-              :data="groupedLocations"
+              :data="groupedType"
               :options="chartTypeOptions"
             ></chartist>
           </v-card>
@@ -119,7 +125,7 @@
               class
               ratio="ct-major-second"
               type="Bar"
-              :data="groupedLocationsByDate"
+              :data="groupedDate"
               :options="chartTypeOptions"
             ></chartist>
           </v-card>
@@ -152,12 +158,12 @@
               class
               ratio="ct-major-second"
               type="Pie"
-              :data="chartStatusData"
+              :data="groupedUser"
               :options="chartStatusOptions"
             ></chartist>
           </v-card>
           <v-card-text>
-            <h4>Movies by Status</h4>
+            <h4>Locations by user</h4>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
@@ -183,14 +189,14 @@
           <v-card color="white" class="pt-5 elevation-10">
             <chartist
               class
-              :data="chartUserData"
+              :data="groupedOwner"
               :options="chartUserOptions"
               ratio="ct-major-second"
               type="Bar"
             ></chartist>
           </v-card>
           <v-card-text>
-            <h4>Movies by Users</h4>
+            <h4>Locations by owner</h4>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
@@ -216,22 +222,31 @@
 </template>
 
 <script>
-//import Vue from "vue";
-//import moment from "moment";
-//import { RepositoryFactory } from "../utils/repositories/repositoryFactory";
-//const MovieRepository = RepositoryFactory.get("movies");
 import { mapState } from "vuex";
+import moment from "moment";
+import grouper from "../utils/grouper.js";
+
+// helper function to get the month name from an item
+const monthName = (item) => moment(item.created, "YYYY-MM-DD").format("YYYY");
+
 export default {
   name: "chart",
   computed: {
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
-    ...mapState("locations", [
-      "locations",
-      "activeLocations",
-      "groupedLocations",
-      "groupedLocationsByDate",
-    ]),
+    ...mapState("locations", ["locations", "activeLocations"]),
+    groupedType: function () {
+      return grouper.groupByField("buildingType", this.locations);
+    },
+    groupedDate: function () {
+      return grouper.groupByField(monthName, this.locations);
+    },
+    groupedUser: function () {
+      return grouper.groupByField("user.nickname", this.locations);
+    },
+    groupedOwner: function () {
+      return grouper.groupByField("owner", this.locations);
+    },
   },
   components: {},
   data() {
@@ -242,38 +257,13 @@ export default {
       chartOptions: {
         lineSmooth: false,
       },
-      chartTypeData: { series: [], labels: [] },
       chartTypeOptions: {},
-      chartStatusData: { series: [], labels: [] },
       chartStatusOptions: {},
-      chartUserData: { series: [], labels: [] },
       chartUserOptions: {},
-      showStatusText: false,
-      dialog: false,
       menuStartDate: false,
       menuEndDate: false,
-      movies_published: [],
-      expanded: [],
       startDate: "",
       endDate: "",
-      singleExpand: true,
-      headers: [
-        { text: "", value: "table-dialog" },
-        { text: "ID", value: "id" },
-        {
-          text: "Name",
-          align: "left",
-          value: "name",
-        },
-        { text: "Company", value: "company" },
-        { text: "Type", value: "type" },
-        { text: "Created", value: "created" },
-        { text: "Updated", value: "updated" },
-        { text: "User", value: "userId" },
-        { text: "Previews", value: "preview_count" },
-        { text: "Status", value: "renderStatus" },
-        { text: "", value: "actions", sortable: false },
-      ],
     };
   },
   created() {
@@ -309,160 +299,37 @@ export default {
           low: 0,
         },
       };
-      //Promise.all(
-      /*
-        await MovieRepository.get('{ "order": "created DESC" }').then(
-          movies => {
-            console.log("my movies", movies);
-            movies.forEach(movie => {
-              movie.show = false;
-              movie.show_video = false;
-              this.movies.push(movie);
-            });
-            
-          }
-        ),
-*/
-      /*
-      await MovieRepository.getStatistic(
-        '{ "groupBy": "created", "date" : "dayOfYear" ' + date_str + "}"
-      ).then(
-        function (stats) {
-          console.log("stat movies", stats);
-          console.log("stat movies .chartData", this.chartData);
-          let data = [];
-          stats.forEach((entry) => {
-            data.push({ x: new Date(entry.date), y: entry.count });
-          });
 
-          this.chartData.series = [
-            {
-              name: "created",
-              data: data,
-            },
-          ];
+      this.chartOptions = {
+        axisX: {
+          type: this.$chartist.FixedScaleAxis,
+          divisor: 10,
+          labelInterpolationFnc(value) {
+            console.log("interpol", value);
+            return moment(value).format("MMM D");
+          },
+        },
+        axisY: {
+          type: this.$chartist.AutoScaleAxis,
+          onlyInteger: true,
+          low: 0,
+        },
+        fullWidth: true,
+        lineSmooth: this.$chartist.Interpolation.none({
+          fillHoles: true,
+        }),
+      };
 
-          //this.chartData.labels = {};
-
-          this.chartOptions = {
-            axisX: {
-              type: this.$chartist.FixedScaleAxis,
-              divisor: 10,
-              labelInterpolationFnc(value) {
-                console.log("interpol", value);
-                return moment(value).format("MMM D");
-              },
-            },
-            axisY: {
-              type: this.$chartist.AutoScaleAxis,
-              onlyInteger: true,
-              low: 0,
-            },
-            fullWidth: true,
-            lineSmooth: this.$chartist.Interpolation.none({
-              fillHoles: true,
-            }),
-          };
-
-          console.log("stat movies .chartData", this.chartData);
-        }.bind(this)
-      );
-
-      await MovieRepository.getStatistic(
-        '{ "groupBy": "type"' + date_str + "}"
-      ).then(
-        function (stats) {
-          console.log("stat movies type", stats);
-
-          stats.forEach(
-            function (entry) {
-              this.chartTypeData.series.push(entry.count);
-              this.chartTypeData.labels.push(entry.type);
-            }.bind(this)
-          );
-
-          this.chartTypeOptions = {
-            distributeSeries: true,
-            axisY: {
-              type: this.$chartist.AutoScaleAxis,
-              onlyInteger: true,
-              low: 0,
-            },
-          };
-
-          console.log("stat movies type .chartData", this.chartTypeData);
-        }.bind(this)
-      );
-
-      await MovieRepository.getStatistic(
-        '{ "groupBy": "renderStatus"' + date_str + "}"
-      ).then(
-        function (stats) {
-          console.log("stat movies status", stats);
-
-          stats.forEach(
-            function (entry) {
-              this.chartStatusData.series.push(entry.count);
-              this.chartStatusData.labels.push(entry.renderStatus);
-            }.bind(this)
-          );
-
-          this.chartStatusOptions = {};
-
-          console.log("stat movies type .chartData", this.chartStatusData);
-        }.bind(this)
-      );
-
-      await MovieRepository.getStatistic(
-        '{"groupBy": "userId","lookup":"client"' + date_str + "}"
-      ).then(
-        function (users) {
-          console.log("stat movies userId", users);
-
-          users.forEach(
-            function (user) {
-              this.chartUserData.series.push(user.count);
-              this.chartUserData.labels.push(user.user[0].email);
-            }.bind(this)
-          );
-
-          this.chartUserOptions = {
-            distributeSeries: true,
-            horizontalBars: true,
-            axisX: {
-              labelInterpolationFnc: this.$chartist.noop,
-            },
-            axisY: {
-              offset: 140,
-            },
-          };
-
-          console.log("stat movies userId .chartData", this.chartUserData);
-        }.bind(this)
-      );
-      //);
-      */
-
-      /*
-      publishedMovies.forEach(movie => {
-        movie.show = false;
-        this.movies_published.push(movie);
-      });
-      */
-    },
-    updateFromStream(msg) {
-      var data = JSON.parse(msg.data);
-      this.movies_published.forEach((movie) => {
-        if (data.target === movie.id) {
-          movie.renderStatus = data.data.renderStatus;
-          if (movie.renderStatus == "done") {
-            movie.url = data.data.url;
-            this.$toast.success(
-              "Your movie '" + movie.name + "' has been rendered"
-            );
-          }
-        }
-      });
+      this.chartUserOptions = {
+        distributeSeries: true,
+        horizontalBars: true,
+        axisX: {
+          labelInterpolationFnc: this.$chartist.noop,
+        },
+        axisY: {
+          offset: 140,
+        },
+      };
     },
   },
 };

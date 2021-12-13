@@ -13,8 +13,6 @@ export const locations = {
   state: {
     status: "",
     locations: {},
-    groupedLocations: {},
-    groupedLocationsByDate: {},
     activeLocation: null
   },
   mutations: {
@@ -27,7 +25,7 @@ export const locations = {
     },
 
     locations_success(state, payload) {
-      console.log('locations_success',payload.locations);
+      console.log('locations_success', payload.locations);
 
       state.status = "loaded";
       state.locations = payload.locations;
@@ -37,66 +35,6 @@ export const locations = {
       //   state.groupedLocations['series'].push(element[0])
       // }) 
       
-      
-      var series = _.chain(payload.locations)
-      // Group the elements of Array based on `color` property
-      .groupBy("buildingType")
-      // `key` is group's name (color), `value` is the array of objects
-      .map((value, key) => ({ key }))
-      .value();
-      var grouped = _.groupBy(payload.locations,"buildingType");
-      console.log('groupedLocations_success_1', labels);
-      series = _.map(grouped, function(value, key) {
-        
-        return value.length;
-      });
-      var labels = _.map(grouped, function(value, key) {
-        return key;
-      });
-      //_.chain(payload.locations)
-      // Group the elements of Array based on `color` property
-      
-      // `key` is group's name (color), `value` is the array of objects
-      //.map((value, key) => ({ value }))
-      //.value();
-      console.log('groupedLocations_success2', series);
-
-      state.groupedLocations =  {
-        labels: labels,
-        series: series
-      };
-
-
-
-
-      var grouped_date = _.chain(payload.locations).groupBy( monthName)
-      .mapValues(items => _.map(items, 'name'))
-      .value()
-       //_.groupBy(payload.locations,"created");
-      console.log('groupedLocations_success_1', grouped_date);
-      var series_date = _.map(grouped_date, function(value, key) {
-        
-        return value.length;
-      });
-      var labels_date = _.map(grouped_date, function(value, key) {
-        return key;
-      });
-      //_.chain(payload.locations)
-      // Group the elements of Array based on `color` property
-      
-      // `key` is group's name (color), `value` is the array of objects
-      //.map((value, key) => ({ value }))
-      //.value();
-      console.log('groupedLocations_success2', series_date);
-
-      state.groupedLocationsByDate =  {
-        labels: labels_date,
-        series: series_date
-      };
-
-      // {series: { data: ['1','2','3']}, labels: ['one','two','three']}
-
-      console.log('groupedLocations_success', state.groupedLocations);
     },
     locations_grouped(state, payload) {
 
@@ -173,8 +111,6 @@ export const locations = {
   getters: {
     locationsStatus: state => state.status,
     getLocations: state => state.locations,
-    getGroupedLocations: state => state.groupedLocations,
-    getGroupedLocationsByDate: state => state.groupedLocationsByDate,
     getActive: state => state.activeLocation
   }
 };
