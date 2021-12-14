@@ -1,0 +1,54 @@
+self.__precacheManifest = (self.__precacheManifest || []).concat([
+  {
+    "revision": "d4d2ad4662ac676e94d6",
+    "url": "/vue-lm-stats/css/app.652edca6.css"
+  },
+  {
+    "revision": "6a7efaf5b551ac561f0f",
+    "url": "/vue-lm-stats/css/chunk-vendors.56d2c20a.css"
+  },
+  {
+    "revision": "9cacdc876e2049988fcab540c21738d5",
+    "url": "/vue-lm-stats/fonts/materialdesignicons-webfont.9cacdc87.eot"
+  },
+  {
+    "revision": "9d243c168a4f1c2cb3cec74884344de7",
+    "url": "/vue-lm-stats/fonts/materialdesignicons-webfont.9d243c16.woff2"
+  },
+  {
+    "revision": "a0711490bcd581b647329230b3e915cf",
+    "url": "/vue-lm-stats/fonts/materialdesignicons-webfont.a0711490.woff"
+  },
+  {
+    "revision": "b62641afc9ab487008e996a5c5865e56",
+    "url": "/vue-lm-stats/fonts/materialdesignicons-webfont.b62641af.ttf"
+  },
+  {
+    "revision": "b038130205ae9f5f37898fb7745e0cb4",
+    "url": "/vue-lm-stats/img/logo_cropped_alt.b0381302.png"
+  },
+  {
+    "revision": "7d6ee245cd2f215d7a685471b57ed0ca",
+    "url": "/vue-lm-stats/index.html"
+  },
+  {
+    "revision": "177311d9c749583109bd",
+    "url": "/vue-lm-stats/js/about.e584b0d6.js"
+  },
+  {
+    "revision": "d4d2ad4662ac676e94d6",
+    "url": "/vue-lm-stats/js/app.a89205c9.js"
+  },
+  {
+    "revision": "6a7efaf5b551ac561f0f",
+    "url": "/vue-lm-stats/js/chunk-vendors.e1e6419a.js"
+  },
+  {
+    "revision": "2b9379c9ce441a7fb2a35849e2297199",
+    "url": "/vue-lm-stats/manifest.json"
+  },
+  {
+    "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
+    "url": "/vue-lm-stats/robots.txt"
+  }
+]);
