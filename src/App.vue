@@ -13,14 +13,20 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-menu bottom left>
+      <v-menu overflow-y-scroll left top>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
 
-        <v-list nav dense subheader three-line>
+        <v-list
+          nav
+          dense
+          subheader
+          one-line
+          style="overflow-y: auto; max-height: 100vh"
+        >
           <v-subheader>Regionen</v-subheader>
           <v-list-item-group v-model="activeRegion" color="primary">
             <template v-for="(item, i) in regions">
@@ -32,12 +38,14 @@
               >
                 <template>
                   <v-list-item-avatar>
-                    <v-icon class="grey lighten-1" dark> mdi-folder </v-icon>
+                    <v-icon class="grey lighten-1" dark>
+                      mdi-map-marker
+                    </v-icon>
                   </v-list-item-avatar>
 
                   <v-list-item-content>
                     <v-list-item-title
-                      >{{ item.title }} {{ item.locations }}
+                      >{{ item.title }} <v-chip>{{ item.locations }}</v-chip>
                     </v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action> </v-list-item-action>
