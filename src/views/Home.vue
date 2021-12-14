@@ -6,16 +6,80 @@
           <v-row>
             <v-col cols="12" sm="6" md="4">
               <h2>{{ regionData.title }}</h2>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-map-marker</v-icon>
-                </v-list-item-icon>
-                <v-list-item-subtitle>{{
-                  locations.length
-                }}</v-list-item-subtitle>
-              </v-list-item>
+
+              <v-list
+                ><v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-map-marker</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-subtitle>{{
+                    locations.length
+                  }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-map-marker</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-subtitle
+                    >{{ regionData.lonlat[1] }} x
+                    {{ regionData.lonlat[0] }}</v-list-item-subtitle
+                  >
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-map-marker</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-subtitle>{{
+                    regionData.zoom
+                  }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-map-marker</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-subtitle>
+                    <v-switch v-model="mapOptions.show_markers"></v-switch>
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </v-list>
             </v-col>
-            <v-col cols="12" sm="6" md="4"> </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <l-map
+                :zoom="regionData.zoom"
+                :minZoom="2"
+                :center="[regionData.lonlat[1], regionData.lonlat[0]]"
+                style="min-height: 500px"
+              >
+                <l-tile-layer
+                  url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+                ></l-tile-layer>
+                <div v-if="mapOptions.show_markers">
+                  <l-circle-marker
+                    v-for="(place, index) in this.locations"
+                    :key="'marker-' + index"
+                    :lat-lng="[place.lonlat[1], place.lonlat[0]]"
+                    :id="index"
+                    :options="{ title: 'marker-' + index, id: index }"
+                  >
+                    <!--l-tooltip
+                    :content="place.title"
+                    :options="{ permanent: 'true', direction: 'top' }"
+                  /-->
+                    <l-popup
+                      :content="place.title"
+                      :options="{ permanent: 'true', direction: 'top' }"
+                    />
+                  </l-circle-marker>
+                </div>
+                <Vue2LeafletHeatmap
+                  :lat-lng="latlngs"
+                  :radius="30"
+                  :min-opacity="0.75"
+                  :max-zoom="10"
+                  :blur="60"
+                ></Vue2LeafletHeatmap>
+              </l-map>
+            </v-col>
             <v-col cols="12" sm="6" md="4"> </v-col>
           </v-row>
         </v-card>
@@ -225,6 +289,7 @@
 import { mapState } from "vuex";
 import moment from "moment";
 import grouper from "../utils/grouper.js";
+import Vue2LeafletHeatmap from "../components/Vue2LeafletHeatmap.vue";
 
 // helper function to get the month name from an item
 const monthName = (item) => moment(item.created, "YYYY-MM-DD").format("YYYY");
@@ -247,8 +312,20 @@ export default {
     groupedOwner: function () {
       return grouper.groupByField("owner", this.locations);
     },
+    latlngs: function () {
+      console.log("recaclulate locations", this.locations);
+      if (this.locations) {
+        return this.locations.map(function (p) {
+          return [p.lonlat[1], p.lonlat[0], 0.1];
+        });
+      } else {
+        return [];
+      }
+    },
   },
-  components: {},
+  components: {
+    Vue2LeafletHeatmap,
+  },
   data() {
     return {
       chartData: {
@@ -264,6 +341,17 @@ export default {
       menuEndDate: false,
       startDate: "",
       endDate: "",
+      circle: {
+        radius: 14,
+        color: "transparent",
+        fillcolor: "rgba(242, 71, 38, 1)",
+        fillopacity: 0.85,
+      },
+      mapOptions: {
+        zoom: 10,
+        min_zoom: 2,
+        show_markers: false,
+      },
     };
   },
   created() {
@@ -330,6 +418,27 @@ export default {
           offset: 140,
         },
       };
+    },
+    handleMapClick(e) {
+      // toggleModal
+      console.log("onclick");
+      console.log(e.target.options.id);
+      console.log(e.target.options.title);
+
+      if (e.target.options.title) {
+        // set all state to false
+        for (let i = 0; i < this.data.layer.places.length; i++) {
+          this.$set(this.data.layer.places[i], "state", false);
+        }
+        console.log(
+          "Clicked place: " + this.data.layer.places[e.target.options.id].title
+        );
+        console.log(
+          "Clicked place ID: " + this.data.layer.places[e.target.options.id].id
+        );
+        this.data.layer.places[e.target.options.id].state =
+          !this.data.layer.places[e.target.options.id].state;
+      }
     },
   },
 };

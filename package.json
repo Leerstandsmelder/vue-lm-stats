@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "leaflet": "^1.7.1",
+    "leaflet-heatmap": "^1.0.0",
+    "leaflet.heat": "^0.2.0",
     "lodash": "^4.17.21",
     "mdi": "^2.2.43",
     "moment": "^2.29.1",
@@ -17,6 +20,7 @@
     "vue": "^2.6.11",
     "vue-chartist": "^2.3.1",
     "vue-router": "^3.2.0",
+    "vue2-leaflet": "^2.7.1",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0"
   },
