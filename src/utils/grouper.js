@@ -10,12 +10,21 @@ export default {
         return value.length;
       });
       var labels_data = _.map(grouped_data, function(value, key) {
-        return key;
+        return key +' ('+ value.length + ')';
       });
-      // console.log('groupedBy_2', series_data, labels_data);
+      //console.log('groupedByField', series_data, labels_data);
       return {
         labels: labels_data,
         series: series_data
       };
+  },
+  groupInBetween(locations, startDate, endDate) {
+    //console.log('locations',locations);
+      var dated_locs = locations.filter((item) => {
+        return new Date(item.created).getTime() >= new Date(startDate).getTime() &&
+               new Date(item.updated).getTime() <= new Date(endDate).getTime();
+        });
+        //console.log('locations FILTERED',dated_locs);
+      return dated_locs;
   }
 };

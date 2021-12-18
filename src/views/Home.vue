@@ -13,10 +13,10 @@
                     <v-icon>mdi-map-marker</v-icon>
                   </v-list-item-icon>
                   <v-list-item-subtitle>{{
-                    locations.length
+                    datedLocations.length
                   }}</v-list-item-subtitle>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item v-if="regionData.lonlat">
                   <v-list-item-icon>
                     <v-icon>mdi-map-marker</v-icon>
                   </v-list-item-icon>
@@ -55,7 +55,7 @@
                 ></l-tile-layer>
                 <div v-if="mapOptions.show_markers">
                   <l-circle-marker
-                    v-for="(place, index) in this.locations"
+                    v-for="(place, index) in this.datedLocations"
                     :key="'marker-' + index"
                     :lat-lng="[place.lonlat[1], place.lonlat[0]]"
                     :id="index"
@@ -77,6 +77,7 @@
                   :min-opacity="0.75"
                   :max-zoom="10"
                   :blur="60"
+                  ref="heatmap"
                 ></Vue2LeafletHeatmap>
               </l-map>
             </v-col>
@@ -112,6 +113,10 @@
                 <v-date-picker
                   v-model="startDate"
                   @input="menuStartDate = false"
+                  type="month"
+                  year-icon="mdi-calendar-blank"
+                  prev-icon="mdi-skip-previous"
+                  next-icon="mdi-skip-next"
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -136,6 +141,10 @@
                 <v-date-picker
                   v-model="endDate"
                   @input="menuEndDate = false"
+                  type="month"
+                  year-icon="mdi-calendar-blank"
+                  prev-icon="mdi-skip-previous"
+                  next-icon="mdi-skip-next"
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -300,22 +309,29 @@ export default {
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
     ...mapState("locations", ["locations", "activeLocations"]),
+    datedLocations: function () {
+      return grouper.groupInBetween(
+        this.locations,
+        this.startDate,
+        this.endDate
+      );
+    },
     groupedType: function () {
-      return grouper.groupByField("buildingType", this.locations);
+      return grouper.groupByField("buildingType", this.datedLocations);
     },
     groupedDate: function () {
-      return grouper.groupByField(monthName, this.locations);
+      return grouper.groupByField(monthName, this.datedLocations);
     },
     groupedUser: function () {
-      return grouper.groupByField("user.nickname", this.locations);
+      return grouper.groupByField("user.nickname", this.datedLocations);
     },
     groupedOwner: function () {
-      return grouper.groupByField("owner", this.locations);
+      return grouper.groupByField("owner", this.datedLocations);
     },
     latlngs: function () {
-      console.log("recaclulate locations", this.locations);
-      if (this.locations) {
-        return this.locations.map(function (p) {
+      console.log("recaclulate locations", this.datedLocations);
+      if (this.datedLocations) {
+        return this.datedLocations.map(function (p) {
           return [p.lonlat[1], p.lonlat[0], 0.1];
         });
       } else {
@@ -339,8 +355,8 @@ export default {
       chartUserOptions: {},
       menuStartDate: false,
       menuEndDate: false,
-      startDate: "",
-      endDate: "",
+      startDate: "2010-01",
+      endDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
       circle: {
         radius: 14,
         color: "transparent",
