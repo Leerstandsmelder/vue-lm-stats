@@ -59,35 +59,37 @@ export const region = {
       //   regionId: data.id,
       // };
       //let url = `${baseDomain}/auth/local`;
-      let url = `${baseDomain}/regions/${data.uuid}`;
-      return new Promise((resolve, reject) => {
-        commit("region_request");
-        api({
-          //url: `${baseDomain}/api/Clients/login`,
-          url: url,
-          //data: select,
-          method: "GET"
-        })
-          .then(resp => {
-            console.log("set region resp", resp);
-            this.state.regionId = resp.data.uuid;
-            this.state.regionData = resp.data;
-            this.state.region = resp;
-            console.log('setregion', resp.data)
-            localStorage.setItem("regionId", resp.data.uuid);
-            //localStorage.setItem("regionData", resp.regionData);
-            commit("region_success", {regionId: resp.data.uuid, regionData: resp.data});
-            dispatch('locations/load', null, { root: true })
-            resolve(resp);
+      if(data.uuid != "" && data.uuid != undefined) {
+        let url = `${baseDomain}/regions/${data.uuid}`;
+        return new Promise((resolve, reject) => {
+          commit("region_request");
+          api({
+            //url: `${baseDomain}/api/Clients/login`,
+            url: url,
+            //data: select,
+            method: "GET"
           })
-          .catch(err => {
-            //console.log("login catch", err.response);
-            commit("region_error");
-            localStorage.removeItem("regionId");
-            //localStorage.removeItem("regionData");
-            reject(err);
-          });
-      });
+            .then(resp => {
+              console.log("set region resp", resp);
+              this.state.regionId = resp.data.uuid;
+              this.state.regionData = resp.data;
+              this.state.region = resp;
+              console.log('setregion', resp.data)
+              localStorage.setItem("regionId", resp.data.uuid);
+              //localStorage.setItem("regionData", resp.regionData);
+              commit("region_success", {regionId: resp.data.uuid, regionData: resp.data});
+              dispatch('locations/load', null, { root: true })
+              resolve(resp);
+            })
+            .catch(err => {
+              //console.log("login catch", err.response);
+              commit("region_error");
+              localStorage.removeItem("regionId");
+              //localStorage.removeItem("regionData");
+              reject(err);
+            });
+        });
+      }
     },
   },
   getters: {

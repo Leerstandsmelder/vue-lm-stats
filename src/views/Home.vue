@@ -12,9 +12,10 @@
                   <v-list-item-icon>
                     <v-icon>mdi-map-marker</v-icon>
                   </v-list-item-icon>
-                  <v-list-item-subtitle>{{
-                    datedLocations.length
-                  }}</v-list-item-subtitle>
+                  <v-list-item-subtitle
+                    >{{ datedLocations.length }}
+                    {{ $t("locations.location_plural") }}</v-list-item-subtitle
+                  >
                 </v-list-item>
                 <v-list-item v-if="regionData.lonlat">
                   <v-list-item-icon>
@@ -29,9 +30,10 @@
                   <v-list-item-icon>
                     <v-icon>mdi-map-marker</v-icon>
                   </v-list-item-icon>
-                  <v-list-item-subtitle>{{
-                    regionData.zoom
-                  }}</v-list-item-subtitle>
+                  <v-list-item-subtitle
+                    >{{ regionData.zoom }}
+                    {{ $t("regions.zoom") }}</v-list-item-subtitle
+                  >
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-icon>
@@ -43,7 +45,7 @@
                 </v-list-item>
               </v-list>
             </v-col>
-            <v-col cols="12" sm="6" md="4">
+            <v-col cols="12" sm="6" md="4" v-if="regionData.lonlat">
               <l-map
                 :zoom="regionData.zoom"
                 :minZoom="2"
@@ -330,7 +332,7 @@ export default {
     },
     latlngs: function () {
       console.log("recaclulate locations", this.datedLocations);
-      if (this.datedLocations) {
+      if (this.datedLocations.length > 0) {
         return this.datedLocations.map(function (p) {
           return [p.lonlat[1], p.lonlat[0], 0.1];
         });

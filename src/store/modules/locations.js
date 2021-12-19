@@ -49,8 +49,9 @@ export const locations = {
     },
     loadLocalLocations(state) {
       if (localStorage.getItem("locations")) {
-        state.locations = localStorage.getItem("locations");
+        state.locations = JSON.parse(localStorage.getItem("locations"));
         state.status = "restore";
+        console.log('locations from store',state.locations)
       }
     },
     loadLocalActiveLocation(state) {
@@ -68,7 +69,7 @@ export const locations = {
       commit,
       state
     }) {
-      console.log("load locations action", state.locations);
+      console.log("load locations action", JSON.stringify(state.locations));
       commit("loadLocalLocations");
       commit("loadLocalActiveLocation");
       dispatch('set');
@@ -82,30 +83,34 @@ export const locations = {
       
     },
     set({ commit }, data) {
-      console.log("set locations action", data);
-      let url = `${baseDomain}/regions/${this.state.regionId}/locations/`;
-      return new Promise((resolve, reject) => {
-        commit("locations_request");
-        api({
-          url: url,
-          method: "GET"
-        })
-          .then(resp => {
-            console.log("set locations resp", resp);
-            this.state.locations = resp.data.results;
-            
-            localStorage.setItem("locations", resp.data.results);
-            //localStorage.setItem("locationsData", resp.locationsData);
-            commit("locations_success", {locations: resp.data.results});
-            resolve(resp);
+      console.log("set locations action", this.state.regionId);
+      if(this.state.regionId != "" && this.state.regionId != undefined) {
+
+        let url = `${baseDomain}/regions/${this.state.regionId}/locations/`;
+        return new Promise((resolve, reject) => {
+          commit("locations_request");
+          api({
+            url: url,
+            method: "GET"
           })
-          .catch(err => {
-            console.log("locations_error catch", err.response);
-            commit("locations_error");
-            localStorage.removeItem("locations");
-            reject(err);
-          });
-      });
+            .then(resp => {
+              console.log("set locations resp", resp);
+              this.state.locations = resp.data.results;
+              
+              //localStorage.setItem("locations", resp.data.results);
+              localStorage.setItem("locations", JSON.stringify(resp.data.results));
+              //localStorage.setItem("locationsData", resp.locationsData);
+              commit("locations_success", {locations: resp.data.results});
+              resolve(resp);
+            })
+            .catch(err => {
+              console.log("locations_error catch", err.response);
+              commit("locations_error");
+              localStorage.removeItem("locations");
+              reject(err);
+            });
+        });
+      }
     },
   },
   getters: {

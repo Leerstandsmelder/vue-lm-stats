@@ -35,7 +35,7 @@ export const regions = {
     },
     loadLocalRegions(state) {
       if (localStorage.getItem("regions")) {
-        state.regions = localStorage.getItem("regions");
+        state.regions = JSON.parse(localStorage.getItem("regions"));
         state.status = "restore";
       }
     },
@@ -80,7 +80,7 @@ export const regions = {
             console.log("set regions resp", resp);
             this.state.regions = resp.data.results;
             
-            localStorage.setItem("regions", resp.data.results);
+            localStorage.setItem("regions", JSON.stringify(resp.data.results));
             //localStorage.setItem("regionsData", resp.regionsData);
             commit("regions_success", {regions: resp.data.results});
             resolve(resp);
