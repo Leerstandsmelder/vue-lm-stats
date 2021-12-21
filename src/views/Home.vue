@@ -1,298 +1,330 @@
 <template>
-  <v-container class="pa-2">
-    <v-row>
-      <v-col>
-        <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <v-row>
-            <v-col cols="12" sm="6" md="4">
-              <h2>{{ regionData.title }}</h2>
-
-              <v-list
-                ><v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-map-marker</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-subtitle
-                    >{{ datedLocations.length }}
-                    {{ $t("locations.location_plural") }}</v-list-item-subtitle
-                  >
-                </v-list-item>
-                <v-list-item v-if="regionData.lonlat">
-                  <v-list-item-icon>
-                    <v-icon>mdi-map-marker</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-subtitle
-                    >{{ regionData.lonlat[1] }} x
-                    {{ regionData.lonlat[0] }}</v-list-item-subtitle
-                  >
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-map-marker</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-subtitle
-                    >{{ regionData.zoom }}
-                    {{ $t("regions.zoom") }}</v-list-item-subtitle
-                  >
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-map-marker</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-subtitle>
-                    <v-switch v-model="mapOptions.show_markers"></v-switch>
-                  </v-list-item-subtitle>
-                </v-list-item>
-              </v-list>
-            </v-col>
-            <v-col cols="12" sm="6" md="4" v-if="regionData.lonlat">
-              <l-map
-                :zoom="regionData.zoom"
-                :minZoom="2"
-                :center="[regionData.lonlat[1], regionData.lonlat[0]]"
-                style="min-height: 500px"
+  <v-container>
+    <v-container v-if="!regionData">
+      <v-row>
+        <v-col>
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <h2>Hallo Leerstand!</h2>
+            <p>Daten aus den einzelenen Regionen</p>
+            <v-list nav dense subheader one-line>
+              <v-list-item
+                :key="`item-${i}`"
+                :value="item"
+                active-class="teal--text text--darken-4"
+                v-for="(item, i) in regions"
               >
-                <l-tile-layer
-                  url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
-                ></l-tile-layer>
-                <div v-if="mapOptions.show_markers">
-                  <l-circle-marker
-                    v-for="(place, index) in this.datedLocations"
-                    :key="'marker-' + index"
-                    :lat-lng="[place.lonlat[1], place.lonlat[0]]"
-                    :id="index"
-                    :options="{ title: 'marker-' + index, id: index }"
-                  >
-                    <!--l-tooltip
+                <template>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >{{ item.title }}
+                      <v-chip>{{ item.locations }}</v-chip>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action> </v-list-item-action>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container class="pa-2" v-if="regionData">
+      <v-row>
+        <v-col>
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <h2>{{ regionData.title }}</h2>
+
+                <v-list
+                  ><v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-map-marker</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-subtitle
+                      >{{ datedLocations.length }}
+                      {{
+                        $t("locations.location_plural")
+                      }}</v-list-item-subtitle
+                    >
+                  </v-list-item>
+                  <v-list-item v-if="regionData.lonlat">
+                    <v-list-item-icon>
+                      <v-icon>mdi-map-marker</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-subtitle
+                      >{{ regionData.lonlat[1] }} x
+                      {{ regionData.lonlat[0] }}</v-list-item-subtitle
+                    >
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-map-marker</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-subtitle
+                      >{{ regionData.zoom }}
+                      {{ $t("regions.zoom") }}</v-list-item-subtitle
+                    >
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-map-marker</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-subtitle>
+                      <v-switch v-model="mapOptions.show_markers"></v-switch>
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+              <v-col cols="12" sm="6" md="4" v-if="regionData.lonlat">
+                <l-map
+                  :zoom="regionData.zoom"
+                  :minZoom="2"
+                  :center="[regionData.lonlat[1], regionData.lonlat[0]]"
+                  style="min-height: 500px"
+                >
+                  <l-tile-layer
+                    url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
+                  ></l-tile-layer>
+                  <div v-if="mapOptions.show_markers">
+                    <l-circle-marker
+                      v-for="(place, index) in this.datedLocations"
+                      :key="'marker-' + index"
+                      :lat-lng="[place.lonlat[1], place.lonlat[0]]"
+                      :id="index"
+                      :options="{ title: 'marker-' + index, id: index }"
+                    >
+                      <!--l-tooltip
                     :content="place.title"
                     :options="{ permanent: 'true', direction: 'top' }"
                   /-->
-                    <l-popup
-                      :content="place.title"
-                      :options="{ permanent: 'true', direction: 'top' }"
-                    />
-                  </l-circle-marker>
-                </div>
-                <Vue2LeafletHeatmap
-                  :lat-lng="latlngs"
-                  :radius="30"
-                  :min-opacity="0.75"
-                  :max-zoom="10"
-                  :blur="60"
-                  ref="heatmap"
-                ></Vue2LeafletHeatmap>
-              </l-map>
-            </v-col>
-            <v-col cols="12" sm="6" md="4"> </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
+                      <l-popup
+                        :content="place.title"
+                        :options="{ permanent: 'true', direction: 'top' }"
+                      />
+                    </l-circle-marker>
+                  </div>
+                  <Vue2LeafletHeatmap
+                    :lat-lng="latlngs"
+                    :radius="30"
+                    :min-opacity="0.75"
+                    :max-zoom="10"
+                    :blur="60"
+                    ref="heatmap"
+                  ></Vue2LeafletHeatmap>
+                </l-map>
+              </v-col>
+              <v-col cols="12" sm="6" md="4"> </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col>
-        <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <h2>Statistics</h2>
-          <v-row>
-            <v-col cols="12" sm="6" md="4">
-              <v-menu
-                v-model="menuStartDate"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
+      <v-row>
+        <v-col>
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <h2>Statistics</h2>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-menu
+                  v-model="menuStartDate"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="startDate"
+                      label="Start date"
+                      prepend-icon="mdi-calendar-account"
+                      readonly
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
                     v-model="startDate"
-                    label="Start date"
-                    prepend-icon="mdi-calendar-account"
-                    readonly
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="startDate"
-                  @input="menuStartDate = false"
-                  type="month"
-                  year-icon="mdi-calendar-blank"
-                  prev-icon="mdi-skip-previous"
-                  next-icon="mdi-skip-next"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <v-menu
-                v-model="menuEndDate"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
+                    @input="menuStartDate = false"
+                    type="month"
+                    year-icon="mdi-calendar-blank"
+                    prev-icon="mdi-skip-previous"
+                    next-icon="mdi-skip-next"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-menu
+                  v-model="menuEndDate"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="endDate"
+                      label="End date"
+                      prepend-icon="mdi-calendar-account"
+                      readonly
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
                     v-model="endDate"
-                    label="End date"
-                    prepend-icon="mdi-calendar-account"
-                    readonly
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="endDate"
-                  @input="menuEndDate = false"
-                  type="month"
-                  year-icon="mdi-calendar-blank"
-                  prev-icon="mdi-skip-previous"
-                  next-icon="mdi-skip-next"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <v-btn color="success" @click="fetch()" left large>
-                <v-icon>mdi-reload</v-icon>Reload
+                    @input="menuEndDate = false"
+                    type="month"
+                    year-icon="mdi-calendar-blank"
+                    prev-icon="mdi-skip-previous"
+                    next-icon="mdi-skip-next"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-btn color="primary" @click="fetch()" left large>
+                  <v-icon>mdi-reload</v-icon>Reload
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
+                type="Bar"
+                :data="groupedType"
+                :options="chartTypeOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>LM by type</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-download</v-icon>
               </v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" sm="6">
-        <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <v-card color="white" class="pt-5 elevation-10">
-            <chartist
-              class
-              ratio="ct-major-second"
-              type="Bar"
-              :data="groupedType"
-              :options="chartTypeOptions"
-            ></chartist>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-information</v-icon>
+              </v-btn>
+            </v-card-actions>
           </v-card>
-          <v-card-text>
-            <h4>LM by type</h4>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-download</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-information</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="6">
-        <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <v-card color="white" class="pt-5 elevation-10">
-            <chartist
-              class
-              ratio="ct-major-second"
-              type="Bar"
-              :data="groupedDate"
-              :options="chartTypeOptions"
-            ></chartist>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
+                type="Bar"
+                :data="groupedDate"
+                :options="chartTypeOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations created on date</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-download</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-information</v-icon>
+              </v-btn>
+            </v-card-actions>
           </v-card>
-          <v-card-text>
-            <h4>Locations created on date</h4>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-download</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-information</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="6">
-        <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <v-card color="white" class="pt-5 elevation-10">
-            <chartist
-              class
-              ratio="ct-major-second"
-              type="Pie"
-              :data="groupedUser"
-              :options="chartStatusOptions"
-            ></chartist>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
+                type="Pie"
+                :data="groupedUser"
+                :options="chartStatusOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations by user</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-download</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-information</v-icon>
+              </v-btn>
+            </v-card-actions>
           </v-card>
-          <v-card-text>
-            <h4>Locations by user</h4>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-download</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-information</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="6">
-        <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-          <v-card color="white" class="pt-5 elevation-10">
-            <chartist
-              class
-              :data="groupedOwner"
-              :options="chartUserOptions"
-              ratio="ct-major-second"
-              type="Bar"
-            ></chartist>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                :data="groupedOwner"
+                :options="chartUserOptions"
+                ratio="ct-major-second"
+                type="Bar"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations by owner</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-download</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-information</v-icon>
+              </v-btn>
+            </v-card-actions>
           </v-card>
-          <v-card-text>
-            <h4>Locations by owner</h4>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-download</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              small
-              :to="{ name: 'form', params: { id: 'stats_type' } }"
-            >
-              <v-icon small>mdi-information</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-container>
 </template>
 
