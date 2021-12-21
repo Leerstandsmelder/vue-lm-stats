@@ -15,7 +15,9 @@
       <v-spacer></v-spacer>
       <v-menu overflow-y-scroll left top>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on">
+          <v-btn color="primary" v-bind="attrs" v-on="on">
+            <span v-if="regionData">{{ regionData.title }}</span>
+            <span v-if="!regionData">Region wählen</span>
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
@@ -115,3 +117,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.v-sheet.theme--dark.v-toolbar.v-app-bar.v-app-bar--fixed.primary {
+  z-index: 10000;
+}
+</style>
