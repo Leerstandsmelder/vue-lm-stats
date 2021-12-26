@@ -6,8 +6,8 @@ export const region = {
   namespaced: true,
   state: {
     status: "",
-    regionId: localStorage.getItem("regionId") || "",
-    regionData: localStorage.getItem("regionData") || "",
+    regionId:  "",
+    regionData: "",
     region: {}
   },
   mutations: {
@@ -15,15 +15,8 @@ export const region = {
     region_request(state) {
       state.status = "loading";
     },
-    region_register(state, regionId) {
-      state.status = "registering";
-      state.regionId = regionId;
-    },
     region_success(state, payload) {
-      console.log('region_success',payload.regionId);
-      
-      console.log('region_success',payload.regionData);
-
+      console.log('region_success',payload);
       state.status = "loaded";
       state.regionId = payload.regionId;
       state.regionData = payload.regionData;
@@ -36,37 +29,48 @@ export const region = {
       state.regionId = "";
       state.regionData = "";
     },
-    loadLocalregionId(state) {
-      if (localStorage.getItem("regionId")) {
-        state.regionId = localStorage.getItem("regionId");
-        state.status = "restore";
-      }
-    },
   },
   actions: {
+    loadLocalRegion({state}) {
+      console.log('loadLocalRegion action',state);
+
+      return new Promise((resolve, reject) => {
+        if (localStorage.getItem("region")) {
+          var region = JSON.parse(localStorage.getItem("region"));
+          state.regionId = region.uuid;
+          state.regionData = region;
+          state.status = "restore";
+          resolve(region); 
+        } else {
+          reject();
+        }
+      })
+    },
     load({
       dispatch,
       commit,
       state
     }) {
       console.log("load region action", state.regionId);
-      commit("loadLocalregionId");
-      dispatch('set', {uuid: state.regionId});
+      if (localStorage.getItem("region")) {
+        dispatch("loadLocalRegion").then(response => {
+          console.log("response", response);
+          dispatch('locations/load', null, { root: true });
+        });
+      } else {
+        dispatch('set', {uuid: state.regionId}).then(response => {
+          
+        });
+      }
     },
     set({ dispatch, commit }, data) {
       console.log("set region action", data);
-      // let select = {
-      //   regionId: data.id,
-      // };
-      //let url = `${baseDomain}/auth/local`;
       if(data.uuid != "" && data.uuid != undefined) {
         let url = `${baseDomain}/regions/${data.uuid}`;
         return new Promise((resolve, reject) => {
           commit("region_request");
           api({
-            //url: `${baseDomain}/api/Clients/login`,
             url: url,
-            //data: select,
             method: "GET"
           })
             .then(resp => {
@@ -74,18 +78,14 @@ export const region = {
               this.state.regionId = resp.data.uuid;
               this.state.regionData = resp.data;
               this.state.region = resp;
-              console.log('setregion', resp.data)
-              localStorage.setItem("regionId", resp.data.uuid);
-              //localStorage.setItem("regionData", resp.regionData);
+              localStorage.setItem("region", JSON.stringify(resp.data));
               commit("region_success", {regionId: resp.data.uuid, regionData: resp.data});
-              dispatch('locations/load', null, { root: true })
+              dispatch('locations/set', null, { root: true });    
               resolve(resp);
             })
             .catch(err => {
-              //console.log("login catch", err.response);
               commit("region_error");
-              localStorage.removeItem("regionId");
-              //localStorage.removeItem("regionData");
+              localStorage.removeItem("region");
               reject(err);
             });
         });

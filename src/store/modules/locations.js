@@ -12,8 +12,7 @@ export const locations = {
   namespaced: true,
   state: {
     status: "",
-    locations: {},
-    activeLocation: null
+    locations: {}
   },
   mutations: {
     locations_request(state) {
@@ -28,16 +27,7 @@ export const locations = {
       console.log('locations_success', payload.locations);
 
       state.status = "loaded";
-      state.locations = payload.locations;
-      // this.chartTypeData.series.push(entry.count);
-      //         this.chartTypeData.labels.push(entry.type);
-      // state.groupedLocations = _.groupBy(payload.locations, 'buildingType').map(element => {
-      //   state.groupedLocations['series'].push(element[0])
-      // }) 
-      
-    },
-    locations_grouped(state, payload) {
-
+      state.locations = payload.locations;      
     },
     locations_error(state) {
       state.status = "error";
@@ -53,15 +43,7 @@ export const locations = {
         state.status = "restore";
         console.log('locations from store',state.locations)
       }
-    },
-    loadLocalActiveLocation(state) {
-      if (localStorage.getItem("activeLocation")) {
-        state.activeLocation = JSON.parse(localStorage.getItem("activeLocation"));
-        console.log('loadLocalActiveLocation: state.activeLocation',state.activeLocation)
-      } else {
-        console.log('state.activeLocation',state.activeLocation)
-      }
-    },
+    }
   },
   actions: {
     load({
@@ -70,23 +52,18 @@ export const locations = {
       state
     }) {
       console.log("load locations action", JSON.stringify(state.locations));
-      commit("loadLocalLocations");
-      commit("loadLocalActiveLocation");
-      dispatch('set');
-    },
-    setActive({ commit }, data) {
-      return new Promise((resolve) => {
-        console.log("setActive", data);
-        localStorage.setItem("activeLocation", JSON.stringify(data));
-        resolve(commit("loadLocalActiveLocation"));
-      });
-      
+      if (localStorage.getItem("locations")) {
+        commit("loadLocalLocations");
+      } else {
+        dispatch('set');
+      }
+       
     },
     set({ commit }, data) {
-      console.log("set locations action", this.state.regionId);
-      if(this.state.regionId != "" && this.state.regionId != undefined) {
+      console.log("set locations action", this.state.region.regionId);
+      if(this.state.region.regionId != "" && this.state.region.regionId != undefined) {
 
-        let url = `${baseDomain}/regions/${this.state.regionId}/locations/`;
+        let url = `${baseDomain}/regions/${this.state.region.regionId}/locations/`;
         return new Promise((resolve, reject) => {
           commit("locations_request");
           api({
@@ -115,7 +92,6 @@ export const locations = {
   },
   getters: {
     locationsStatus: state => state.status,
-    getLocations: state => state.locations,
-    getActive: state => state.activeLocation
+    getLocations: state => state.locations
   }
 };

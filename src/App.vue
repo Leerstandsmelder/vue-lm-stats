@@ -107,12 +107,13 @@ export default {
   methods: {
     init: function () {
       this.$store.dispatch("regions/load");
-      this.$store.dispatch("region/load");
-      this.activeRegion = this.$store.state.regionData;
+      this.$store.dispatch("region/load").then(() => {
+        this.activeRegion = this.$store.state.regionData;
+      });
     },
     setActive: function (region) {
-      console.log("setActive", region);
-      this.$store.dispatch("regions/setActive", region);
+      console.log("setActiveregion from Menu click", region);
+      this.$store.dispatch("region/set", region);
     },
   },
 };

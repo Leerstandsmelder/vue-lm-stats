@@ -342,7 +342,7 @@ export default {
   computed: {
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
-    ...mapState("locations", ["locations", "activeLocations"]),
+    ...mapState("locations", ["locations"]),
     datedLocations: function () {
       return grouper.groupInBetween(
         this.locations,

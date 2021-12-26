@@ -7,8 +7,7 @@ export const regions = {
   namespaced: true,
   state: {
     status: "",
-    regions: {},
-    active: null
+    regions: {}
   },
   mutations: {
     regions_request(state) {
@@ -38,15 +37,7 @@ export const regions = {
         state.regions = JSON.parse(localStorage.getItem("regions"));
         state.status = "restore";
       }
-    },
-    loadLocalActive(state) {
-      if (localStorage.getItem("active")) {
-        state.active = JSON.parse(localStorage.getItem("active"));
-        console.log('loadLocalActive: state.active',state.active)
-      } else {
-        console.log('state.active',state.active)
-      }
-    },
+    }
   },
   actions: {
     load({
@@ -54,20 +45,16 @@ export const regions = {
       commit,
       state
     }) {
+      commit("regions_request");
       console.log("load regions action", state.regions);
-      commit("loadLocalRegions");
-      commit("loadLocalActive");
-      dispatch('set');
-    },
-    setActive({ commit }, data) {
-      return new Promise((resolve) => {
-        console.log("setActive", data);
-        localStorage.setItem("active", JSON.stringify(data));
-        resolve(commit("loadLocalActive"));
-      });
+      if (localStorage.getItem("regions")) {
+        commit("loadLocalRegions");
+      } else {
+        dispatch('setRegions');
+      }
       
     },
-    set({ commit }, data) {
+    setRegions({ commit }, data) {
       console.log("set regions action", data);
       let url = `${baseDomain}/regions/`;
       return new Promise((resolve, reject) => {
@@ -81,7 +68,6 @@ export const regions = {
             this.state.regions = resp.data.results;
             
             localStorage.setItem("regions", JSON.stringify(resp.data.results));
-            //localStorage.setItem("regionsData", resp.regionsData);
             commit("regions_success", {regions: resp.data.results});
             resolve(resp);
           })
