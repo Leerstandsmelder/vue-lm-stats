@@ -287,6 +287,24 @@
               <chartist
                 class
                 ratio="ct-major-second"
+                type="Pie"
+                :data="groupedPostcode"
+                :options="chartStatusOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations by postcode</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions> </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
                 type="Bar"
                 :data="groupedType"
                 :options="chartTypeOptions"
@@ -415,6 +433,9 @@ export default {
     },
     groupedOwner: function () {
       return grouper.groupByField("owner", this.datedLocations, 5);
+    },
+    groupedPostcode: function () {
+      return grouper.groupByField("postcode", this.datedLocations, 5);
     },
     latlngs: function () {
       console.log("recalculate locations", this.datedLocations);
