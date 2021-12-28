@@ -4,12 +4,12 @@ import i18n from "../i18n";
 
 
 export default {
-  groupByField(field, filter_array) {
+  groupByField(field, filter_array, min_threshold = 3) {
     var grouped_data = _.chain(filter_array).groupBy( field )
       .mapValues(items => items)
       .value();
       grouped_data = _.pickBy(grouped_data, function(value, key) {
-        return value.length > 5
+        return value.length > min_threshold
       });
       var series_data = _.map(grouped_data, function(value, key) {
         return value.length;
