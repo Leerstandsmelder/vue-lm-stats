@@ -16,7 +16,7 @@ export const region = {
       state.status = "loading";
     },
     region_success(state, payload) {
-      console.log('region_success',payload);
+      // console.log('region_success',payload);
       state.status = "loaded";
       state.regionId = payload.regionId;
       state.regionData = payload.regionData;
@@ -32,7 +32,7 @@ export const region = {
   },
   actions: {
     loadLocalRegion({state}) {
-      console.log('loadLocalRegion action',state);
+      // console.log('loadLocalRegion action',state);
 
       return new Promise((resolve, reject) => {
         if (localStorage.getItem("region")) {
@@ -51,10 +51,10 @@ export const region = {
       commit,
       state
     }) {
-      console.log("load region action", state.regionId);
+      // console.log("load region action", state.regionId);
       if (localStorage.getItem("region")) {
         dispatch("loadLocalRegion").then(response => {
-          console.log("response", response);
+          // console.log("response", response);
           dispatch('locations/load', null, { root: true });
         });
       } else {
@@ -64,7 +64,7 @@ export const region = {
       }
     },
     set({ dispatch, commit }, data) {
-      console.log("set region action", data);
+      // console.log("set region action", data);
       if(data.uuid != "" && data.uuid != undefined) {
         let url = `${baseDomain}/regions/${data.uuid}`;
         return new Promise((resolve, reject) => {
@@ -74,7 +74,7 @@ export const region = {
             method: "GET"
           })
             .then(resp => {
-              console.log("set region resp", resp);
+              // console.log("set region resp", resp);
               this.state.regionId = resp.data.uuid;
               this.state.regionData = resp.data;
               this.state.region = resp;

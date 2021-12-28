@@ -19,7 +19,7 @@ export const regions = {
     },
 
     regions_success(state, payload) {
-      console.log('regions_success',payload.regions);
+      // console.log('regions_success',payload.regions);
 
       state.status = "loaded";
       state.regions = payload.regions;
@@ -46,7 +46,7 @@ export const regions = {
       state
     }) {
       commit("regions_request");
-      console.log("load regions action", state.regions);
+      // console.log("load regions action", state.regions);
       if (localStorage.getItem("regions")) {
         commit("loadLocalRegions");
       } else {
@@ -55,7 +55,7 @@ export const regions = {
       
     },
     setRegions({ commit }, data) {
-      console.log("set regions action", data);
+      // console.log("set regions action", data);
       let url = `${baseDomain}/regions/`;
       return new Promise((resolve, reject) => {
         commit("regions_request");
@@ -64,7 +64,7 @@ export const regions = {
           method: "GET"
         })
           .then(resp => {
-            console.log("set regions resp", resp);
+            // console.log("set regions resp", resp);
             this.state.regions = resp.data.results;
             
             localStorage.setItem("regions", JSON.stringify(resp.data.results));
@@ -72,7 +72,7 @@ export const regions = {
             resolve(resp);
           })
           .catch(err => {
-            console.log("regions_error catch", err.response);
+            // console.log("regions_error catch", err.response);
             commit("regions_error");
             localStorage.removeItem("regions");
             reject(err);

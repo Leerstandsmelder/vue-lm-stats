@@ -24,7 +24,7 @@ export const locations = {
     },
 
     locations_success(state, payload) {
-      console.log('locations_success', payload.locations);
+      //console.log('locations_success', payload.locations);
 
       state.status = "loaded";
       state.locations = payload.locations;      
@@ -41,7 +41,7 @@ export const locations = {
       if (localStorage.getItem("locations")) {
         state.locations = JSON.parse(localStorage.getItem("locations"));
         state.status = "restore";
-        console.log('locations from store',state.locations)
+        //console.log('locations from store',state.locations)
       }
     }
   },
@@ -51,7 +51,7 @@ export const locations = {
       commit,
       state
     }) {
-      console.log("load locations action", JSON.stringify(state.locations));
+      //console.log("load locations action", JSON.stringify(state.locations));
       if (localStorage.getItem("locations")) {
         commit("loadLocalLocations");
       } else {
@@ -60,7 +60,7 @@ export const locations = {
        
     },
     set({ commit }, data) {
-      console.log("set locations action", this.state.region.regionId);
+      //console.log("set locations action", this.state.region.regionId);
       if(this.state.region.regionId != "" && this.state.region.regionId != undefined) {
 
         let url = `${baseDomain}/regions/${this.state.region.regionId}/locations/`;
@@ -71,7 +71,7 @@ export const locations = {
             method: "GET"
           })
             .then(resp => {
-              console.log("set locations resp", resp);
+              //console.log("set locations resp", resp);
               this.state.locations = resp.data.results;
               
               //localStorage.setItem("locations", resp.data.results);
@@ -81,7 +81,7 @@ export const locations = {
               resolve(resp);
             })
             .catch(err => {
-              console.log("locations_error catch", err.response);
+              //console.log("locations_error catch", err.response);
               commit("locations_error");
               localStorage.removeItem("locations");
               reject(err);
