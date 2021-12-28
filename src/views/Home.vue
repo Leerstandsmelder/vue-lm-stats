@@ -204,12 +204,12 @@
                 class
                 ratio="ct-major-second"
                 type="Bar"
-                :data="groupedType"
+                :data="groupedCreated"
                 :options="chartTypeOptions"
               ></chartist>
             </v-card>
             <v-card-text>
-              <h4>LM by type</h4>
+              <h4>Locations created by month</h4>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -237,12 +237,30 @@
                 class
                 ratio="ct-major-second"
                 type="Bar"
-                :data="groupedDate"
+                :data="groupedUpdated"
                 :options="chartTypeOptions"
               ></chartist>
             </v-card>
             <v-card-text>
-              <h4>Locations created on date</h4>
+              <h4>Locations updated by month</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions> </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
+                type="Pie"
+                :data="groupedUser"
+                :options="chartStatusOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations by user</h4>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -269,13 +287,13 @@
               <chartist
                 class
                 ratio="ct-major-second"
-                type="Pie"
-                :data="groupedUser"
-                :options="chartStatusOptions"
+                type="Bar"
+                :data="groupedType"
+                :options="chartTypeOptions"
               ></chartist>
             </v-card>
             <v-card-text>
-              <h4>Locations by user</h4>
+              <h4>LM by type</h4>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -341,7 +359,10 @@ import grouper from "../utils/grouper.js";
 import Vue2LeafletHeatmap from "../components/Vue2LeafletHeatmap.vue";
 
 // helper function to get the month name from an item
-const monthName = (item) => moment(item.created, "YYYY-MM-DD").format("YYYY");
+const monthCreated = (item) =>
+  moment(item.created, "YYYY-MM-DD").format("YYYY");
+const monthUpdated = (item) =>
+  moment(item.updated, "YYYY-MM-DD").format("YYYY");
 
 export default {
   name: "chart",
@@ -381,16 +402,19 @@ export default {
     },
 
     groupedType: function () {
-      return grouper.groupByField("buildingType", this.datedLocations);
+      return grouper.groupByField("buildingType", this.datedLocations, 5);
     },
-    groupedDate: function () {
-      return grouper.groupByField(monthName, this.datedLocations);
+    groupedCreated: function () {
+      return grouper.groupByField(monthCreated, this.datedLocations, 0);
+    },
+    groupedUpdated: function () {
+      return grouper.groupByField(monthUpdated, this.datedLocations, 0);
     },
     groupedUser: function () {
-      return grouper.groupByField("user.nickname", this.datedLocations);
+      return grouper.groupByField("user.nickname", this.datedLocations, 5);
     },
     groupedOwner: function () {
-      return grouper.groupByField("owner", this.datedLocations);
+      return grouper.groupByField("owner", this.datedLocations, 5);
     },
     latlngs: function () {
       console.log("recalculate locations", this.datedLocations);
