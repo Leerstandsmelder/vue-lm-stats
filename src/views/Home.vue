@@ -123,7 +123,7 @@
       <v-row>
         <v-col>
           <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
-            <h2>Statistics</h2>
+            <h2>Date range</h2>
             <v-row>
               <v-col cols="12" sm="6" md="4">
                 <v-menu
@@ -181,10 +181,16 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-btn color="primary" @click="fetch()" left large>
-                  <v-icon>mdi-reload</v-icon>Reload
-                </v-btn>
+              <v-col cols="12" sm="6" md="4"> </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-range-slider
+                  :hint="rangeHint"
+                  :max="maxDate"
+                  :min="minDate"
+                  v-model="rangeDate"
+                ></v-range-slider>
               </v-col>
             </v-row>
           </v-card>
@@ -350,6 +356,30 @@ export default {
         this.endDate
       );
     },
+    maxDate: function () {
+      return moment(this.defaultEndDate).unix();
+    },
+    minDate: function () {
+      return moment(this.defaultStartDate).unix();
+    },
+    rangeHint: function () {
+      return "Locations in Range: " + this.datedLocations.length;
+    },
+    rangeDate: {
+      get() {
+        var range = [
+          moment(this.startDate).unix(),
+          moment(this.endDate).unix(),
+        ];
+        return range;
+      },
+      set(newDate) {
+        this.startDate = moment.unix(newDate[0]).format("YYYY-MM");
+        this.endDate = moment.unix(newDate[1]).format("YYYY-MM");
+        //return newDate;
+      },
+    },
+
     groupedType: function () {
       return grouper.groupByField("buildingType", this.datedLocations);
     },
@@ -363,7 +393,7 @@ export default {
       return grouper.groupByField("owner", this.datedLocations);
     },
     latlngs: function () {
-      console.log("recaclulate locations", this.datedLocations);
+      console.log("recalculate locations", this.datedLocations);
       if (this.datedLocations.length > 0) {
         return this.datedLocations.map(function (p) {
           return [p.lonlat[1], p.lonlat[0], 0.1];
@@ -389,7 +419,10 @@ export default {
       chartUserOptions: {},
       menuStartDate: false,
       menuEndDate: false,
+      defaultStartDate: "2010-01",
       startDate: "2010-01",
+      defaultEndDate:
+        new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
       endDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
       circle: {
         radius: 14,
@@ -400,14 +433,14 @@ export default {
       mapOptions: {
         zoom: 10,
         min_zoom: 2,
-        show_markers: false,
+        show_markers: true,
       },
     };
   },
   created() {
     console.log("stat movies .chartData", this.chartData);
     //if (this.isLoggedIn())
-    this.fetch();
+    this.init();
   },
   methods: {
     isLoggedIn() {
@@ -416,19 +449,7 @@ export default {
     isLoading() {
       return this.$store.getters["loader/loading"];
     },
-    async fetch() {
-      var date_query = [];
-      if (this.startDate) {
-        date_query.push('"startDate" : "' + this.startDate + '"');
-      }
-      if (this.endDate) {
-        date_query.push('"endDate" : "' + this.endDate + '"');
-      }
-      var date_str = date_query.join(",");
-      if (date_str != "") {
-        date_str = "," + date_str;
-      }
-
+    async init() {
       this.chartTypeOptions = {
         distributeSeries: true,
         axisY: {
