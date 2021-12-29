@@ -560,36 +560,17 @@ export default {
 };
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-table.table {
-  margin: 0 auto;
-  width: 98%;
-  max-width: 98%;
+<style>
+.v-slider--horizontal.theme--light .v-slider__track-container {
+  height: 8px;
 }
-.datatable-cell-wrapper {
-  width: inherit;
-  position: relative;
-  z-index: 4;
-  padding: 10px 24px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.v-slider--horizontal.theme--light .v-slider__thumb {
+  width: 16px;
+  height: 16px;
 }
 
-.datatable__expand-content .card__text {
-  z-index: 3;
-  position: relative;
-}
-.datatable-container {
-  position: absolute;
-  background-color: white;
-  top: -50px;
-  left: -14px;
-  right: -14px;
-  bottom: 0;
-  z-index: 2;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.15), 0 1px 10px 0 rgba(0, 0, 0, 0.15),
-    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+.v-slider--horizontal.theme--light .v-slider__thumb::before {
+  width: 40px;
+  height: 40px;
 }
 </style>
