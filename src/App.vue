@@ -65,6 +65,9 @@
         <span class="mr-2">LM plattform</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
+      <v-btn to="Login" text v-if="!isLoggedIn">
+        <span class="mr-2">Login</span>
+      </v-btn>
     </v-app-bar>
 
     <v-main>
@@ -105,6 +108,7 @@ export default {
     ...mapState("loader", ["loading"]),
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
+    ...mapState("auth", ["isLoggedIn"]),
   },
   mounted() {
     this.init();
