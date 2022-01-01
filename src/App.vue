@@ -2,17 +2,20 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="./assets/logo_cropped_alt.png"
-          width="100"
-        />
+        <router-link to="/">
+          <v-img
+            alt="Vuetify Name"
+            class="shrink mt-1 hidden-sm-and-down"
+            contain
+            min-width="100"
+            src="./assets/logo_cropped_alt.png"
+            width="100"
+          />
+        </router-link>
       </div>
 
       <v-spacer></v-spacer>
+      <Loader :visible="loading" />
       <v-menu overflow-y-scroll left top>
         <template v-slot:activator="{ on, attrs }">
           <v-btn color="primary" v-bind="attrs" v-on="on">
@@ -72,6 +75,7 @@
 
 <script>
 import { mapState } from "vuex";
+import Loader from "@/components/loader";
 export default {
   name: "App",
   data() {
@@ -80,6 +84,9 @@ export default {
       appName: process.env.VUE_APP_TITLE,
       activeRegion: null,
     };
+  },
+  components: {
+    Loader,
   },
   watch: {
     // eslint-disable-next-line
@@ -95,6 +102,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("loader", ["loading"]),
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
   },
