@@ -74,12 +74,12 @@ export const region = {
             method: "GET"
           })
             .then(resp => {
-              // console.log("set region resp", resp);
-              this.state.regionId = resp.data.uuid;
-              this.state.regionData = resp.data;
+              console.log("set region resp", resp);
+              this.state.regionId = resp.uuid;
+              this.state.regionData = resp;
               this.state.region = resp;
-              localStorage.setItem("region", JSON.stringify(resp.data));
-              commit("region_success", {regionId: resp.data.uuid, regionData: resp.data});
+              localStorage.setItem("region", JSON.stringify(resp));
+              commit("region_success", {regionId: resp.uuid, regionData: resp});
               dispatch('locations/set', null, { root: true });    
               resolve(resp);
             })

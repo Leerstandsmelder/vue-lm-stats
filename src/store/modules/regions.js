@@ -65,10 +65,9 @@ export const regions = {
         })
           .then(resp => {
             // console.log("set regions resp", resp);
-            this.state.regions = resp.data.results;
-            
-            localStorage.setItem("regions", JSON.stringify(resp.data.results));
-            commit("regions_success", {regions: resp.data.results});
+            this.state.regions = resp.results;
+            localStorage.setItem("regions", JSON.stringify(resp.results));
+            commit("regions_success", {regions: resp.results});
             resolve(resp);
           })
           .catch(err => {
