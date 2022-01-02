@@ -118,6 +118,7 @@ export default {
   },
   methods: {
     init: function () {
+      this.$store.dispatch("auth/init");
       this.$store.dispatch("regions/load");
       this.$store.dispatch("region/load").then(() => {
         this.activeRegion = this.$store.state.regionData;

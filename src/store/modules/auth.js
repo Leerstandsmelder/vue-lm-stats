@@ -116,6 +116,19 @@ export const auth = {
 
       });
     },
+    init({dispatch, commit}) {
+      return new Promise((resolve, reject) => {
+        if (localStorage.getItem("token")) {
+          this.state.token = localStorage.getItem("token");
+          dispatch('getCredentials').then(response => {
+            commit("auth_success", this.state.token);
+            resolve('TOKEN SET');
+          });
+        } else {
+          reject('NO TOKEN');
+        }
+      })
+    },
     callback({ commit }, data) {
       return new Promise((resolve, reject) => {
         //console.log("auth store callback", data);
