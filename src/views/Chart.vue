@@ -254,6 +254,57 @@
               <chartist
                 class
                 ratio="ct-major-second"
+                type="Pie"
+                :data="groupedUser"
+                :options="chartStatusOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations by user</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-download</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                small
+                :to="{ name: 'form', params: { id: 'stats_type' } }"
+              >
+                <v-icon small>mdi-information</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
+                type="Pie"
+                :data="groupedPostcode"
+                :options="chartStatusOptions"
+              ></chartist>
+            </v-card>
+            <v-card-text>
+              <h4>Locations by postcode</h4>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions> </v-card-actions>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="pl-10 pr-10 pb-10 pt-5 elevation-5">
+            <v-card color="white" class="pt-5 elevation-10">
+              <chartist
+                class
+                ratio="ct-major-second"
                 type="Bar"
                 :data="groupedType"
                 :options="chartTypeOptions"
@@ -332,7 +383,7 @@ const monthUpdated = (item) =>
   moment(item.updated, "YYYY-MM-DD").format("YYYY");
 
 export default {
-  name: "home",
+  name: "chart",
   computed: {
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),

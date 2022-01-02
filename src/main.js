@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import './plugins/axios'
 import "./plugins/chartist";
-import App from './App.vue'
 import './registerServiceWorker'
-import router from './router'
+
 import vuetify from './plugins/vuetify';
 import api from "./utils/api.js";
 import store from "./store";
 import { setupInterceptors } from "./utils/httpInterceptors";
+import router from './router'
+import App from './App.vue'
 
 import moment from "moment";
 
@@ -25,8 +26,8 @@ Vue.component('l-popup', LPopup);
 Vue.prototype.$http = api;
 Vue.prototype.$moment = moment;
 
-Vue.config.productionTip = false
-Vue.config.devtools = false
+Vue.config.productionTip = true
+Vue.config.devtools = true
 
 
 new Vue({

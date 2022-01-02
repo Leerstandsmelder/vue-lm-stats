@@ -1,5 +1,47 @@
 <template>
   <v-app>
+    <v-navigation-drawer
+      temporary
+      absolute
+      right
+      disable-resize-watcher
+      v-model="sideNav"
+      width="300"
+    >
+      <v-toolbar flat dark>
+        <v-list>
+          <v-list-item>
+            <v-toolbar-title class="headline text-uppercase">
+              <span>MF</span>
+              <span class="font-weight-light">{{ appName }}</span>
+            </v-toolbar-title>
+          </v-list-item>
+        </v-list>
+      </v-toolbar>
+      <v-list>
+        <div v-for="item in menuItems" :key="item.title">
+          <v-list-item :to="item.path" v-if="item.component">
+            <v-list-item-action>
+              <v-icon>mdi-{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-badge color="red" v-if="item.badge">
+              <span slot="badge">{{ item.badge }}</span>
+              <span>{{ item.title }}</span>
+            </v-badge>
+            <v-list-item-content v-else>{{ item.title }}</v-list-item-content>
+          </v-list-item>
+          <v-divider v-if="!item.component"></v-divider>
+          <v-subheader v-if="!item.component">{{ item.title }}</v-subheader>
+        </div>
+        <v-divider v-if="isLoggedIn"></v-divider>
+        <v-list-item v-if="isLoggedIn" @click.prevent="logout">
+          <v-list-item-action>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Logout</v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <router-link to="/">
@@ -65,9 +107,10 @@
         <span class="mr-2">LM plattform</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
-      <v-btn to="Login" text v-if="!isLoggedIn">
-        <span class="mr-2">Login</span>
-      </v-btn>
+      <v-app-bar-nav-icon
+        @click.stop="sideNav = !sideNav"
+        class
+      ></v-app-bar-nav-icon>
     </v-app-bar>
 
     <v-main>
@@ -108,7 +151,50 @@ export default {
     ...mapState("loader", ["loading"]),
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
-    ...mapState("auth", ["isLoggedIn"]),
+    isLoggedIn: function () {
+      return this.$store.getters["auth/isLoggedIn"];
+    },
+    menuItems: function () {
+      var routes = [];
+
+      for (var i in this.$router.options.routes) {
+        // var router_routes = this.$router.options.routes;
+        // console.log("menuitems", i, router_routes);
+        // if (!Object.prototype.hasOwnProperty.call(router_routes, i)) {
+        //   continue;
+        // }
+
+        var route = this.$router.options.routes[i];
+
+        var hasProp = Object.prototype.hasOwnProperty.call(route, "title");
+        console.log("menuitems", i, route, hasProp);
+        if (Object.prototype.hasOwnProperty.call(route, "title")) {
+          console.log("menuitemsMETA", i, route.meta);
+          if (
+            Object.prototype.hasOwnProperty.call(route, "meta") &&
+            Object.prototype.hasOwnProperty.call(route.meta, "requiresAuth") &&
+            ((route.meta.requiresAuth === false && !this.isLoggedIn) ||
+              (route.meta.requiresAuth === true && this.isLoggedIn))
+          ) {
+            if (
+              Object.prototype.hasOwnProperty.call(route.meta, "requiresRole")
+            ) {
+              if (
+                route.meta.requiresRole === this.$store.getters["auth/getRole"]
+              ) {
+                routes.push(route);
+              }
+            } else {
+              routes.push(route);
+            }
+          }
+        }
+      }
+      console.log("menuitems", routes);
+      return routes;
+
+      //return this.$router.options.routes;
+    },
   },
   mounted() {
     this.init();
