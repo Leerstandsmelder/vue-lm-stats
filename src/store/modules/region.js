@@ -12,22 +12,23 @@ export const region = {
   },
   mutations: {
 
-    region_request(state) {
+    request(state) {
       state.status = "loading";
     },
-    region_success(state, payload) {
-      // console.log('region_success',payload);
+    success(state, payload) {
+      // console.log('success',payload);
       state.status = "loaded";
       state.regionId = payload.regionId;
       state.regionData = payload.regionData;
     },
-    region_error(state) {
+    error(state) {
       state.status = "error";
     },
-    region_logout(state) {
+    clear(state) {
       state.status = "";
       state.regionId = "";
       state.regionData = "";
+      state.region = {};
     },
   },
   actions: {
@@ -68,29 +69,38 @@ export const region = {
       if(data.uuid != "" && data.uuid != undefined) {
         let url = `${baseDomain}/regions/${data.uuid}`;
         return new Promise((resolve, reject) => {
-          commit("region_request");
+          commit("request");
           api({
             url: url,
             method: "GET"
           })
             .then(resp => {
-              // console.log("set region resp", resp);
-              this.state.regionId = resp.data.uuid;
-              this.state.regionData = resp.data;
+              console.log("set region resp", resp);
+              this.state.regionId = resp.uuid;
+              this.state.regionData = resp;
               this.state.region = resp;
-              localStorage.setItem("region", JSON.stringify(resp.data));
-              commit("region_success", {regionId: resp.data.uuid, regionData: resp.data});
+              localStorage.setItem("region", JSON.stringify(resp));
+              commit("success", {regionId: resp.uuid, regionData: resp});
               dispatch('locations/set', null, { root: true });    
               resolve(resp);
             })
             .catch(err => {
-              commit("region_error");
+              commit("error");
               localStorage.removeItem("region");
               reject(err);
             });
         });
       }
     },
+    clear({ dispatch, commit }) {
+      return new Promise((resolve, reject) => {
+            commit("clear");
+            localStorage.removeItem("region");
+            dispatch('locations/clear', null, { root: true });    
+            resolve("cleared");
+      });
+    }
+
   },
   getters: {
     regionStatus: state => state.status,
