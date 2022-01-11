@@ -232,4 +232,10 @@ export default {
 .v-sheet.theme--dark.v-toolbar.v-app-bar.v-app-bar--fixed.primary {
   z-index: 10000;
 }
+.v-overlay.v-overlay--absolute.v-overlay--active.theme--dark {
+  z-index: 7777 !important;
+}
+.v-navigation-drawer.v-navigation-drawer--absolute.v-navigation-drawer--open {
+  z-index: 8888;
+}
 </style>
