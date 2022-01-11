@@ -48,9 +48,28 @@ const routes = [
     component: Chart,
     meta: {
       requiresAuth: true,
-    //  requiresRole: "admin",
+      requiresRole: "admin",
     },
   },
+  {
+    path: "/",
+    name: "divider-admin",
+    title: "Information",
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: "https://www.leerstandsmelder.de",
+    href: true,
+    name: "leerstandsmelder",
+    title: "Leerstandsmelder",
+    icon: "open-in-new",
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  
   {
     path: '/about',
     name: 'About',
@@ -85,7 +104,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
-  console.log("to requiresRole", to);
+  //console.log("to requiresRole", to);
   if (to.matched.some((record) => record.meta.requiresRole)) {
     if (store.getters["auth/getRole"] == to.meta.requiresRole) {
       next();

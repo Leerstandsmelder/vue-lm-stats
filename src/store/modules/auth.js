@@ -21,7 +21,6 @@ export const auth = {
     auth_success(state, token) {
       state.status = "success";
       state.token = token;
-      //console.log("mutation", state);
     },
     auth_error(state) {
       state.status = "error";
@@ -88,10 +87,10 @@ export const auth = {
             if (
               api_keys
             ) {
-              let scope = api_keys;
+              let scope = api_keys[0].scopes;
               this.state.scope = scope;
               // DONT SET IT STATIC
-              //localStorage.setItem("scope", scope);
+              localStorage.setItem("scope", JSON.stringify(scope));
 
                           //TODO: setup userId obj
         // const userId = resp.userId;
@@ -110,7 +109,7 @@ export const auth = {
             commit("auth_error");
             localStorage.removeItem("token");
             localStorage.removeItem("userId");
-            localStorage.removeItem("role");
+            localStorage.removeItem("scope");
             reject(err);
           });
 
@@ -125,7 +124,7 @@ export const auth = {
             resolve('TOKEN SET');
           });
         } else {
-          reject('NO TOKEN');
+          resolve('NO TOKEN');
         }
       })
     },
@@ -174,23 +173,10 @@ export const auth = {
     },
     logout({ commit }) {
       return new Promise((resolve, reject) => {
-        api({
-          url: `${baseDomain}/api/Clients/logout`,
-          method: "POST"
-        })
-          .then(resp => {
             commit("logout");
             localStorage.removeItem("token");
             delete api.defaults.headers.common["Authorization"];
-            resolve(resp);
-          })
-          .catch(err => {
-            console.log("logout catch", err);
-            commit("auth_error", err);
-            localStorage.removeItem("token");
-            delete api.defaults.headers.common["Authorization"];
-            reject(err);
-          });
+            resolve("LOGGED_OUT");
       });
     }
   },
@@ -198,6 +184,6 @@ export const auth = {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     getUser: state => state.userId,
-    getRole: state => state.role
+    getRole: state => state.scope
   }
 };
