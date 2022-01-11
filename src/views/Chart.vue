@@ -216,14 +216,14 @@
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-download</v-icon>
               </v-btn>
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-information</v-icon>
               </v-btn>
@@ -267,14 +267,14 @@
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-download</v-icon>
               </v-btn>
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-information</v-icon>
               </v-btn>
@@ -318,14 +318,14 @@
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-download</v-icon>
               </v-btn>
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-information</v-icon>
               </v-btn>
@@ -351,14 +351,14 @@
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-download</v-icon>
               </v-btn>
               <v-btn
                 icon
                 small
-                :to="{ name: 'form', params: { id: 'stats_type' } }"
+                :to="{ name: 'chart', params: { id: 'stats_type' } }"
               >
                 <v-icon small>mdi-information</v-icon>
               </v-btn>
