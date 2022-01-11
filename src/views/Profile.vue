@@ -31,6 +31,16 @@
                   :readonly="true"
                 ></v-text-field>
               </v-card-text>
+              <v-card-actions>
+                <!--v-btn @click.stop.prevent="clearLocations()" color="primary"
+                  >Clear location cache</v-btn
+                -->
+                <v-btn @click.stop.prevent="clearRegion()" color="primary"
+                  >Clear region cache</v-btn
+                >
+                <div class="flex-grow-1"></div>
+                <v-btn @click.stop.prevent="logout()" color>Logout</v-btn>
+              </v-card-actions>
             </v-form>
           </v-card>
         </v-col>
@@ -40,9 +50,15 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import { RepositoryFactory } from "../utils/repositories/repositoryFactory";
 const UserRepository = RepositoryFactory.get("users");
 export default {
+  computed: {
+    ...mapState("region", ["regionId", "regionData"]),
+    ...mapState("regions", ["regions", "active"]),
+    ...mapState("locations", ["locations"]),
+  },
   data() {
     return {
       user: false,
@@ -58,6 +74,24 @@ export default {
         this.isLoading = false;
         console.log("user", user);
         this.user = user;
+      });
+    },
+    clearLocations() {
+      this.$store.dispatch("locations/clear").then((response) => {
+        console.log("locations-cleared", response);
+        //this.$router.push("/");
+      });
+    },
+    clearRegion() {
+      this.$store.dispatch("region/clear").then((response) => {
+        console.log("region-cleared", response);
+        this.$root.activeRegion = {};
+        this.$router.push("/");
+      });
+    },
+    logout() {
+      this.$store.dispatch("auth/logout").then(() => {
+        this.$router.push("/login");
       });
     },
   },

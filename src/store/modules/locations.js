@@ -32,7 +32,7 @@ export const locations = {
     locations_error(state) {
       state.status = "error";
     },
-    locations_logout(state) {
+    clear(state) {
       state.status = "";
       state.locations = "";
       
@@ -85,6 +85,14 @@ export const locations = {
         });
       }
     },
+    clear({ commit }) {
+      return new Promise((resolve, reject) => {
+            commit("clear");
+            localStorage.removeItem("locations");
+            this.state.locations = {};
+            resolve("LOGGED_OUT");
+      });
+    }
   },
   getters: {
     locationsStatus: state => state.status,
