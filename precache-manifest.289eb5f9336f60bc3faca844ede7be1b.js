@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "aa9f6b788477170e9265",
+    "revision": "6de8178154a91ae02b31",
     "url": "/vue-lm-stats/css/app.7657691d.css"
   },
   {
@@ -28,7 +28,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-lm-stats/img/logo_cropped_alt.b0381302.png"
   },
   {
-    "revision": "fd874f14faf2a1833dbff7f2cfff1c56",
+    "revision": "f97be8df1dd49f524458b575f31e01a3",
     "url": "/vue-lm-stats/index.html"
   },
   {
@@ -36,8 +36,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vue-lm-stats/js/about.c7789e2d.js"
   },
   {
-    "revision": "aa9f6b788477170e9265",
-    "url": "/vue-lm-stats/js/app.e702c076.js"
+    "revision": "6de8178154a91ae02b31",
+    "url": "/vue-lm-stats/js/app.36db2768.js"
   },
   {
     "revision": "3c61656502dfbe86df55",
