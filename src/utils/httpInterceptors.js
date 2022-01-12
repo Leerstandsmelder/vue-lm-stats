@@ -24,7 +24,7 @@ export function setupInterceptors({ dispatch }) {
       req.pending();
 
       const token = store.state.auth.token;
-      console.log('INTERCEPTOR request', token);
+      // console.log('INTERCEPTOR request', token);
       if (token) {
         config.headers["Authorization"] = 'bearer ' + token;  // for Spring Boot back-end
         //config.headers["x-access-token"] = token; // for Node.js Express back-end

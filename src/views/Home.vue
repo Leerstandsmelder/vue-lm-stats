@@ -38,7 +38,6 @@
                 :min-opacity="0.75"
                 :max-zoom="10"
                 :blur="60"
-                :gradient="{ 0.4: 'green', 0.75: 'lime', 1: 'red' }"
                 ref="heatmap"
               ></Vue2LeafletHeatmap>
             </l-map>
@@ -60,7 +59,7 @@
                       <v-icon>mdi-map-marker</v-icon>
                     </v-list-item-icon>
                     <v-list-item-subtitle
-                      >{{ datedLocations.length }}
+                      >{{ locations.length }}
                       {{
                         $t("locations.location_plural")
                       }}</v-list-item-subtitle
@@ -106,7 +105,7 @@
                   ></l-tile-layer>
                   <div v-if="mapOptions.show_markers">
                     <l-circle-marker
-                      v-for="(place, index) in this.datedLocations"
+                      v-for="(place, index) in this.locations"
                       :key="'marker-' + index"
                       :lat-lng="[place.lonlat[1], place.lonlat[0]]"
                       :id="index"
@@ -144,14 +143,7 @@
 <script>
 import { mapState } from "vuex";
 import moment from "moment";
-import grouper from "../utils/grouper.js";
 import Vue2LeafletHeatmap from "../components/Vue2LeafletHeatmap.vue";
-
-// helper function to get the month name from an item
-const monthCreated = (item) =>
-  moment(item.created, "YYYY-MM-DD").format("YYYY");
-const monthUpdated = (item) =>
-  moment(item.updated, "YYYY-MM-DD").format("YYYY");
 
 export default {
   name: "home",
@@ -159,59 +151,11 @@ export default {
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
     ...mapState("locations", ["locations"]),
-    datedLocations: function () {
-      return grouper.groupInBetween(
-        this.locations,
-        this.startDate,
-        this.endDate
-      );
-    },
-    maxDate: function () {
-      return moment(this.defaultEndDate).unix();
-    },
-    minDate: function () {
-      return moment(this.defaultStartDate).unix();
-    },
-    rangeHint: function () {
-      return "Locations in Range: " + this.datedLocations.length;
-    },
-    rangeDate: {
-      get() {
-        var range = [
-          moment(this.startDate).unix(),
-          moment(this.endDate).unix(),
-        ];
-        return range;
-      },
-      set(newDate) {
-        this.startDate = moment.unix(newDate[0]).format("YYYY-MM");
-        this.endDate = moment.unix(newDate[1]).format("YYYY-MM");
-        //return newDate;
-      },
-    },
 
-    groupedType: function () {
-      return grouper.groupByField("buildingType", this.datedLocations, 5);
-    },
-    groupedCreated: function () {
-      return grouper.groupByField(monthCreated, this.datedLocations, 0);
-    },
-    groupedUpdated: function () {
-      return grouper.groupByField(monthUpdated, this.datedLocations, 0);
-    },
-    groupedUser: function () {
-      return grouper.groupByField("user.nickname", this.datedLocations, 5);
-    },
-    groupedOwner: function () {
-      return grouper.groupByField("owner", this.datedLocations, 5);
-    },
-    groupedPostcode: function () {
-      return grouper.groupByField("postcode", this.datedLocations, 5);
-    },
     latlngs: function () {
-      console.log("recalculate locations", this.datedLocations);
-      if (this.datedLocations.length > 0) {
-        return this.datedLocations.map(function (p) {
+      console.log("recalculate locations", this.locations);
+      if (this.locations.length > 0) {
+        return this.locations.map(function (p) {
           return [p.lonlat[1], p.lonlat[0], 0.1];
         });
       } else {
@@ -234,22 +178,6 @@ export default {
   },
   data() {
     return {
-      chartData: {
-        series: [],
-      },
-      chartOptions: {
-        lineSmooth: false,
-      },
-      chartTypeOptions: {},
-      chartStatusOptions: {},
-      chartUserOptions: {},
-      menuStartDate: false,
-      menuEndDate: false,
-      defaultStartDate: "2010-01",
-      startDate: "2010-01",
-      defaultEndDate:
-        new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
-      endDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
       circle: {
         radius: 14,
         color: "transparent",
@@ -259,12 +187,12 @@ export default {
       mapOptions: {
         zoom: 10,
         min_zoom: 2,
-        show_markers: true,
+        show_markers: false,
       },
     };
   },
   created() {
-    console.log("stat movies .chartData", this.chartData);
+    console.log("start locations", this.locations);
     //if (this.isLoggedIn())
     this.init();
   },
@@ -275,70 +203,9 @@ export default {
     isLoading() {
       return this.$store.getters["loader/loading"];
     },
-    async init() {
-      this.chartTypeOptions = {
-        distributeSeries: true,
-        axisY: {
-          type: this.$chartist.AutoScaleAxis,
-          onlyInteger: true,
-          low: 0,
-        },
-      };
-
-      this.chartOptions = {
-        axisX: {
-          type: this.$chartist.FixedScaleAxis,
-          divisor: 10,
-          labelInterpolationFnc(value) {
-            console.log("interpol", value);
-            return moment(value).format("MMM D");
-          },
-        },
-        axisY: {
-          type: this.$chartist.AutoScaleAxis,
-          onlyInteger: true,
-          low: 0,
-        },
-        fullWidth: true,
-        lineSmooth: this.$chartist.Interpolation.none({
-          fillHoles: true,
-        }),
-      };
-
-      this.chartUserOptions = {
-        distributeSeries: true,
-        horizontalBars: true,
-        axisX: {
-          labelInterpolationFnc: this.$chartist.noop,
-        },
-        axisY: {
-          offset: 140,
-        },
-      };
-    },
+    async init() {},
     popup_content(place) {
       return place.title + " (" + place.locations + ")";
-    },
-    handleMapClick(e) {
-      // toggleModal
-      console.log("onclick");
-      console.log(e.target.options.id);
-      console.log(e.target.options.title);
-
-      if (e.target.options.title) {
-        // set all state to false
-        for (let i = 0; i < this.data.layer.places.length; i++) {
-          this.$set(this.data.layer.places[i], "state", false);
-        }
-        console.log(
-          "Clicked place: " + this.data.layer.places[e.target.options.id].title
-        );
-        console.log(
-          "Clicked place ID: " + this.data.layer.places[e.target.options.id].id
-        );
-        this.data.layer.places[e.target.options.id].state =
-          !this.data.layer.places[e.target.options.id].state;
-      }
     },
   },
 };

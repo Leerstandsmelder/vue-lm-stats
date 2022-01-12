@@ -209,7 +209,6 @@ export default {
   methods: {
     init: function () {
       this.$store.dispatch("auth/init").then((reason) => {
-        console.log("AUTH INIT: ", reason);
         this.$store.dispatch("regions/load");
         this.$store.dispatch("region/load").then(() => {
           this.activeRegion = this.$store.state.regionData;
@@ -217,7 +216,7 @@ export default {
       });
     },
     setActive: function (region) {
-      console.log("setActiveregion from Menu click", region);
+      //console.log("setActiveregion from Menu click", region);
       this.$store.dispatch("region/set", region);
     },
     logout: function () {

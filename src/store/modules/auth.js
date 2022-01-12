@@ -43,7 +43,7 @@ export const auth = {
   },
   actions: {
     login({ dispatch, commit }, data) {
-      console.log("login action", data);
+      //console.log("login action", data);
       let user = {
         email: data.email,
         password: data.password
@@ -57,7 +57,7 @@ export const auth = {
           method: "POST"
         })
           .then(resp => {
-            console.log("login", resp);
+            //console.log("login", resp);
             const token = resp.token;
             this.state.token = token;
             localStorage.setItem("token", token);
@@ -83,7 +83,7 @@ export const auth = {
         })
           .then(resp => {
             var api_keys = resp.results || resp;
-            console.log('resp_keys',resp);
+            //console.log('resp_keys',resp);
             if (
               api_keys
             ) {
@@ -164,7 +164,7 @@ export const auth = {
             resolve(resp);
           })
           .catch(err => {
-            console.log("register catch", err);
+            //console.log("register catch", err);
             commit("auth_error", err);
             localStorage.removeItem("token");
             reject(err);
