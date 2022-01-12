@@ -110,6 +110,13 @@
                     :min-opacity="0.75"
                     :max-zoom="10"
                     :blur="60"
+                    :gradient="{
+                      0.4: '#FFDA47',
+                      0.6: '#EFB300',
+                      0.7: '#E58A40',
+                      0.8: '#C3423F',
+                      1.0: '#8E1D1D',
+                    }"
                     ref="heatmap"
                   ></Vue2LeafletHeatmap>
                 </l-map>
@@ -448,11 +455,12 @@ export default {
       return grouper.groupByField("postcode", this.datedLocations, 5);
     },
     latlngs: function () {
-      console.log("recalculate locations", this.datedLocations);
       if (this.datedLocations.length > 0) {
-        return this.datedLocations.map(function (p) {
+        var mappedL = this.datedLocations.map(function (p) {
           return [p.lonlat[1], p.lonlat[0], 0.1];
         });
+        //console.log("recalculated-->", mappedL);
+        return mappedL;
       } else {
         return [];
       }
@@ -490,7 +498,7 @@ export default {
       mapOptions: {
         zoom: 10,
         min_zoom: 2,
-        show_markers: true,
+        show_markers: false,
       },
     };
   },

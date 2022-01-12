@@ -47,6 +47,12 @@ const props = {
     custom: true,
     default: true,
   },
+  gradient: {
+    type: String,
+    custom: true,
+    default:
+      "{ 0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1.0: 'red'}",
+  },
 };
 export default {
   name: "LHeatmap",
@@ -54,7 +60,16 @@ export default {
   data() {
     return {
       ready: false,
+      mapObject: {},
+      options: {},
     };
+  },
+  watch: {
+    latLng(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.mapObject.setLatLngs(newVal);
+      }
+    },
   },
   mounted() {
     const options = {};
@@ -73,6 +88,10 @@ export default {
     if (this.max) {
       options.max = this.max;
     }
+    if (this.gradient) {
+      options.gradient = this.gradient;
+    }
+
     this.mapObject = L.heatLayer(this.latLng, options);
     DomEvent.on(this.mapObject, this.$listeners);
     propsBinder(this, this.mapObject, props);
@@ -99,6 +118,9 @@ export default {
     setMax(newVal) {
       this.mapObject.setOptions({ max: newVal });
     },
+    setGradient(newVal) {
+      this.mapObject.setOptions({ gradient: newVal });
+    },
     setVisible(newVal, oldVal) {
       if (newVal === oldVal) return;
       if (newVal) {
@@ -109,6 +131,12 @@ export default {
     },
     addLatLng(value) {
       this.mapObject.addLatLng(value);
+    },
+    setLatLngs(value) {
+      this.mapObject.setLatLngs(value);
+    },
+    redraw() {
+      this.mapObject.redraw();
     },
   },
 };
