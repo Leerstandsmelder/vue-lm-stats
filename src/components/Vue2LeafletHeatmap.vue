@@ -48,10 +48,17 @@ const props = {
     default: true,
   },
   gradient: {
-    type: String,
+    type: Object,
     custom: true,
-    default:
-      "{ 0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1.0: 'red'}",
+    default() {
+      return {
+        0.4: "#FFDA47",
+        0.6: "#EFB300",
+        0.7: "#E58A40",
+        0.8: "#C3423F",
+        1.0: "#8E1D1D",
+      };
+    },
   },
 };
 export default {
