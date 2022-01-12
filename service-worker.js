@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/vue-lm-stats/precache-manifest.02c8b01824202d024b6d2011bf14e70f.js"
+  "/vue-lm-stats/precache-manifest.e570b58d9361daeaa47d9bf6821c02e8.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "vue-lm-stats"});
