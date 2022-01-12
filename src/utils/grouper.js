@@ -23,11 +23,11 @@ export default {
         series: series_data
       };
   },
-  groupInBetween(locations, startDate, endDate) {
+  groupInBetween(locations, startDate, endDate, dateField) {
     if(locations.length > 0) {
       var dated_locs = locations.filter((item) => {
-        return new Date(item.created).getTime() >= new Date(startDate).getTime() &&
-               new Date(item.updated).getTime() <= new Date(endDate).getTime();
+        return new Date(item[dateField]).getTime() >= new Date(startDate).getTime() &&
+               new Date(item[dateField]).getTime() <= new Date(endDate).getTime();
         });
       return dated_locs;
     }

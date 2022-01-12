@@ -181,7 +181,16 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" sm="6" md="4"> </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-radio-group v-model="dateField">
+                  <v-radio
+                    v-for="n in availableDateFields"
+                    :key="n"
+                    :label="`Field: ${n}`"
+                    :value="n"
+                  ></v-radio>
+                </v-radio-group>
+              </v-col>
             </v-row>
             <v-row>
               <v-col>
@@ -392,7 +401,8 @@ export default {
       return grouper.groupInBetween(
         this.locations,
         this.startDate,
-        this.endDate
+        this.endDate,
+        this.dateField
       );
     },
     maxDate: function () {
@@ -469,6 +479,8 @@ export default {
       defaultEndDate:
         new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
       endDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
+      availableDateFields: ["created", "updated"],
+      dateField: "created",
       circle: {
         radius: 14,
         color: "transparent",
