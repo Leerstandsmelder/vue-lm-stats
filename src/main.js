@@ -29,6 +29,16 @@ Vue.prototype.$moment = moment;
 Vue.config.productionTip = true
 Vue.config.devtools = true
 
+Vue.filter("formatDate", function(value, format = "YYYY-MM-DD") {
+  if (value) {
+    return moment(String(value)).format(format);
+  }
+});
+Vue.filter("subString", function(string, length = "5") {
+  return string.substring(0, length) + "...";
+});
+
+
 
 new Vue({
   vuetify,
