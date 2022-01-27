@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Profile from '../views/Profile.vue'
 import Chart from '../views/Chart.vue'
+import Map from '../views/Map.vue'
 import store from "../store";
 Vue.use(VueRouter)
 
@@ -59,6 +60,19 @@ const routes = [
       requiresAuth: false,
     },
   },
+  {
+    path: "/map",
+    name: "map",
+    icon: "map",
+    title: "Map",
+    //component: () => import(/* webpackChunkName: "about" */ "./views/Profile.vue")
+    component: Map,
+    meta: {
+      requiresAuth: true,
+      requiresRole: "admin",
+    },
+  },
+
   {
     path: "https://www.leerstandsmelder.de",
     href: true,
