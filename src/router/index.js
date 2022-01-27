@@ -49,7 +49,7 @@ const routes = [
     component: Chart,
     meta: {
       requiresAuth: true,
-      requiresRole: "admin",
+      requiresRole: "region",
     },
   },
   {
@@ -69,7 +69,7 @@ const routes = [
     component: Map,
     meta: {
       requiresAuth: true,
-      requiresRole: "admin",
+      requiresRole: "region",
     },
   },
 
@@ -109,18 +109,18 @@ router.beforeEach((to, from, next) => {
   if (to.name) {
     // Start the route progress bar.
   }
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (store.getters["auth/isLoggedIn"]) {
+  //console.log("to requiresRole", to);
+  if (to.matched.some((record) => record.meta.requiresRole)) {
+    //console.log('getRole', store.getters["auth/getRole"]);    
+    if (store.getters["auth/getRole"].includes(to.meta.requiresRole)) {
+    //if (store.getters["auth/getRole"] == to.meta.requiresRole) {
       next();
       return;
     }
     next("/login");
-  } else {
-    next();
-  }
-  //console.log("to requiresRole", to);
-  if (to.matched.some((record) => record.meta.requiresRole)) {
-    if (store.getters["auth/getRole"] == to.meta.requiresRole) {
+  } else if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (store.getters["auth/isLoggedIn"]) {
+      //console.log('isLoggedIn');  
       next();
       return;
     }
