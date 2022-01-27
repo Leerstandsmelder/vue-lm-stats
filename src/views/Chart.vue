@@ -43,9 +43,15 @@
                     </v-list-item-icon>
                     <v-list-item-subtitle
                       >{{ datedLocations.length }}
-                      {{
-                        $t("locations.location_plural")
-                      }}</v-list-item-subtitle
+                      {{ $t("locations.location_plural") }}
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-home</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-subtitle>
+                      {{ countDemolished }} abgerissen</v-list-item-subtitle
                     >
                   </v-list-item>
                   <v-list-item v-if="regionData.lonlat">
@@ -189,14 +195,35 @@
                 </v-menu>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <v-radio-group v-model="dateField">
-                  <v-radio
-                    v-for="n in availableDateFields"
-                    :key="n"
-                    :label="`Field: ${n}`"
-                    :value="n"
-                  ></v-radio>
-                </v-radio-group>
+                <v-list>
+                  <v-list-item two-line>
+                    <v-list-item-content>
+                      <v-list-item-title> Datumsfeld </v-list-item-title>
+                      <v-list-item-subtitle>
+                        <v-radio-group v-model="dateField">
+                          <v-radio
+                            v-for="n in availableDateFields"
+                            :key="n"
+                            :label="`Field: ${n}`"
+                            :value="n"
+                          ></v-radio>
+                        </v-radio-group>
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item two-line>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >Versteckte Leerstände ausblenden?
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        <v-switch v-model="hiddenFieldSet"
+                          >Versteckte Leerstände anzeigen</v-switch
+                        >
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
               </v-col>
             </v-row>
             <v-row>
@@ -397,6 +424,8 @@ const monthCreated = (item) =>
   moment(item.created, "YYYY-MM-DD").format("YYYY");
 const monthUpdated = (item) =>
   moment(item.updated, "YYYY-MM-DD").format("YYYY");
+const countOccurrences = (arr, val) =>
+  arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
 
 export default {
   name: "chart",
@@ -404,9 +433,18 @@ export default {
     ...mapState("region", ["regionId", "regionData"]),
     ...mapState("regions", ["regions", "active"]),
     ...mapState("locations", ["locations"]),
+    filteredLocations: function () {
+      if (this.hiddenFieldSet == true) {
+        return this.locations.filter((item) => {
+          return item.hidden == false;
+        });
+      } else {
+        return this.locations;
+      }
+    },
     datedLocations: function () {
       return grouper.groupInBetween(
-        this.locations,
+        this.filteredLocations,
         this.startDate,
         this.endDate,
         this.dateField
@@ -436,6 +474,17 @@ export default {
       },
     },
 
+    fieldCount: function (field_name, field_value) {
+      return countOccurrences(this.datedLocations, field_name, field_value);
+    },
+
+    countDemolished: function () {
+      var locs = this.filteredLocations;
+      console.log("citems", locs);
+      return locs.filter((item) => {
+        return item.demolished == true;
+      }).length;
+    },
     groupedType: function () {
       return grouper.groupByField("buildingType", this.datedLocations, 5);
     },
@@ -489,6 +538,7 @@ export default {
       endDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1),
       availableDateFields: ["created", "updated"],
       dateField: "created",
+      hiddenFieldSet: false,
       circle: {
         radius: 14,
         color: "transparent",
@@ -503,7 +553,7 @@ export default {
     };
   },
   created() {
-    console.log("stat movies .chartData", this.chartData);
+    console.log("start chart", this.locations);
     //if (this.isLoggedIn())
     this.init();
   },
@@ -592,5 +642,9 @@ export default {
 .v-slider--horizontal.theme--light .v-slider__thumb::before {
   width: 40px;
   height: 40px;
+}
+
+.v-list-item__subtitle {
+  padding-left: 10px;
 }
 </style>
