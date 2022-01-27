@@ -21,6 +21,7 @@
                 :lat-lng="[place.lonlat[1], place.lonlat[0]]"
                 :id="index"
                 :options="{ title: 'marker-' + index, id: index }"
+                color="#FF7533"
               >
                 <!--l-tooltip
                     :content="place.title"
@@ -110,6 +111,10 @@
                       :lat-lng="[place.lonlat[1], place.lonlat[0]]"
                       :id="index"
                       :options="{ title: 'marker-' + index, id: index }"
+                      :radius="circle.radius"
+                      :color="circle.color"
+                      :fillColor="circle.fillColor"
+                      :fillOpacity="circle.fillOpacity"
                     >
                       <!--l-tooltip
                     :content="place.title"
@@ -179,10 +184,10 @@ export default {
   data() {
     return {
       circle: {
-        radius: 14,
+        radius: 4,
         color: "transparent",
-        fillcolor: "rgba(242, 71, 38, 1)",
-        fillopacity: 0.85,
+        fillColor: "rgba(242, 71, 38, 1)",
+        fillOpacity: 0.85,
       },
       mapOptions: {
         zoom: 10,
