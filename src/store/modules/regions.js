@@ -32,6 +32,11 @@ export const regions = {
       state.regions = "";
       
     },
+    clear(state) {
+      state.status = "";
+      state.regions = {};
+    },
+
     loadLocalRegions(state) {
       if (localStorage.getItem("regions")) {
         state.regions = JSON.parse(localStorage.getItem("regions"));
@@ -78,6 +83,14 @@ export const regions = {
           });
       });
     },
+    clear({ dispatch, commit }) {
+      return new Promise((resolve, reject) => {
+            commit("clear");
+            localStorage.removeItem("regions");
+            dispatch('location/clear', null, { root: true });
+            resolve("cleared");
+      });
+    }
   },
   getters: {
     regionsStatus: state => state.status,

@@ -35,6 +35,9 @@
                 <!--v-btn @click.stop.prevent="clearLocations()" color="primary"
                   >Clear location cache</v-btn
                 -->
+                <v-btn @click.stop.prevent="clearRegions()" color="primary"
+                  >Clear all regions</v-btn
+                >
                 <v-btn @click.stop.prevent="clearRegion()" color="primary"
                   >Clear region cache</v-btn
                 >
@@ -87,6 +90,13 @@ export default {
         console.log("region-cleared", response);
         this.$root.activeRegion = {};
         this.$router.push("/");
+      });
+    },
+    clearRegions() {
+      this.$store.dispatch("regions/clear").then((response) => {
+        console.log("regions-cleared", response);
+        this.$root.activeRegion = {};
+        window.location = "/";
       });
     },
     logout() {
