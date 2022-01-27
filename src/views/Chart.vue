@@ -194,7 +194,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12" sm="6" md="2">
                 <v-list>
                   <v-list-item two-line>
                     <v-list-item-content>
@@ -211,6 +211,10 @@
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
+                </v-list>
+              </v-col>
+              <v-col cols="12" sm="6" md="2">
+                <v-list>
                   <v-list-item two-line>
                     <v-list-item-content>
                       <v-list-item-title
@@ -227,7 +231,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col cols="12" sm="6" md="8">
                 <v-range-slider
                   :hint="rangeHint"
                   :max="maxDate"
