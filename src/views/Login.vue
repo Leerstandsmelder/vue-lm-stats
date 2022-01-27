@@ -58,7 +58,7 @@ export default {
         .then((response) => {
           console.log("response login", response);
           //this.$toast.success("You have been successfully logged in");
-          this.$router.push("/");
+          window.location = "/";
         })
         .catch((err) => {
           console.log("login error", err);
