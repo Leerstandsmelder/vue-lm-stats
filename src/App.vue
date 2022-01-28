@@ -174,6 +174,17 @@ export default {
 
         var route = this.$router.options.routes[i];
 
+        var includer = this.$store.getters["auth/getRole"].includes(
+          route.meta.requiresRole
+        );
+        console.log(
+          "roleRequired",
+
+          route.name,
+          this.$store.getters["auth/getRole"],
+          includer,
+          route.meta.requiresRole
+        );
         var hasProp = Object.prototype.hasOwnProperty.call(route, "title");
         if (Object.prototype.hasOwnProperty.call(route, "title")) {
           if (
